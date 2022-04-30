@@ -22,7 +22,7 @@ import org.apache.shardingsphere.elasticjob.lite.internal.sharding.ShardingNode;
 import org.apache.shardingsphere.elasticjob.lite.internal.storage.JobNodePath;
 
 /**
- * Failover node.
+ * Failover node. 失效转移节点路径。 为什么 /leader/failover 放在 /leader 目录下，而不独立成为一个根目录？经过确认，作业失效转移涉及到分布式锁，统一存储在 /leader 目录下
  */
 public final class FailoverNode {
     
@@ -31,15 +31,15 @@ public final class FailoverNode {
     private static final String LEADER_ROOT = LeaderNode.ROOT + "/" + FAILOVER;
     
     static final String ITEMS_ROOT = LEADER_ROOT + "/items";
-    
+    // /leader/items/${ITEM_ID} 是永久节点，当某台作业节点 CRASH 时，其分配的作业分片项标记需要进行失效转移，存储其分配的作业分片项的 /leader/items/${ITEM_ID} 为空串( "" )；当失效转移标记，移除
     private static final String ITEMS = ITEMS_ROOT + "/%s";
-    
+    // /leader/failover/latch 作业失效转移分布式锁，和 /leader/failover/latch 是一致的。
     static final String LATCH = LEADER_ROOT + "/latch";
-    
+    // ${JOB_NAME}/sharding/${ITEM_ID}/failover
     private static final String EXECUTION_FAILOVER = ShardingNode.ROOT + "/%s/" + FAILOVER;
 
     private static final String FAILOVERING = "failovering";
-
+    // 存储 /sharding/${ITEM_ID}/failovering 为空串( "" )，临时节点，需要进行失效转移执行。
     private static final String EXECUTING_FAILOVER = ShardingNode.ROOT + "/%s/" + FAILOVERING;
     
     private final JobNodePath jobNodePath;

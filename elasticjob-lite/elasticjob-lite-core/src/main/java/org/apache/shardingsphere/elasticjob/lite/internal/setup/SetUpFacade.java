@@ -67,16 +67,16 @@ public final class SetUpFacade {
     }
     
     /**
-     * Register start up info.
+     * Register start up info. 注册作业启动信息
      * 
      * @param enabled enable job on startup
      */
     public void registerStartUpInfo(final boolean enabled) {
-        listenerManager.startAllListeners();
-        leaderService.electLeader();
-        serverService.persistOnline(enabled);
-        instanceService.persistOnline();
-        if (!reconcileService.isRunning()) {
+        listenerManager.startAllListeners(); // 开启 所有监听器
+        leaderService.electLeader(); // 选举 主节点。新的作业启动时，即能保证选举出主节点。当该作业不存在主节点时，当前作业节点成为主节点。当该作业存在主节点，当前作业节主节点不变。
+        serverService.persistOnline(enabled); // 持久化 作业服务器上线信息
+        instanceService.persistOnline(); // 持久化 作业运行实例上线相关信息
+        if (!reconcileService.isRunning()) { // 初始化 调解作业不一致状态服务
             reconcileService.startAsync();
         }
     }

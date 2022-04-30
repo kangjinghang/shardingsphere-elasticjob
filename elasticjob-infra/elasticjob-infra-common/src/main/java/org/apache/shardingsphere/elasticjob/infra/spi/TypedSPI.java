@@ -23,7 +23,7 @@ package org.apache.shardingsphere.elasticjob.infra.spi;
 public interface TypedSPI {
     
     /**
-     * Get type.
+     * Get type. SPI 实现类的type
      *
      * @return type
      */

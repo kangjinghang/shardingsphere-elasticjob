@@ -18,7 +18,7 @@
 package org.apache.shardingsphere.elasticjob.reg.base;
 
 /**
- * Registry center.
+ * Registry center. 注册中心，定义了简单的增删改查注册数据和查询时间的接口方法
  */
 public interface RegistryCenter {
     
@@ -28,12 +28,12 @@ public interface RegistryCenter {
     void init();
     
     /**
-     * Close registry center.
+     * Close registry center. 关闭
      */
     void close();
     
     /**
-     * Get value.
+     * Get value. 获得数据
      * 
      * @param key key
      * @return value
@@ -41,7 +41,7 @@ public interface RegistryCenter {
     String get(String key);
     
     /**
-     * Judge node is exist or not.
+     * Judge node is exist or not. 判断节点是否存在
      * 
      * @param key key
      * @return node is exist or not
@@ -49,7 +49,7 @@ public interface RegistryCenter {
     boolean isExisted(String key);
     
     /**
-     * Persist data.
+     * Persist data. 存储持久节点数据。逻辑等价于 insertOrUpdate 操作
      * 
      * @param key key
      * @param value value
@@ -57,7 +57,7 @@ public interface RegistryCenter {
     void persist(String key, String value);
     
     /**
-     * Update data.
+     * Update data. 使用事务校验键( key )存在才进行更新
      * 
      * @param key key
      * @param value value
@@ -65,14 +65,14 @@ public interface RegistryCenter {
     void update(String key, String value);
     
     /**
-     * Remove data.
+     * Remove data. 移除注册数据
      * 
      * @param key key
      */
     void remove(String key);
     
     /**
-     * Get current time from registry center.
+     * Get current time from registry center. 获取注册中心当前时间
      * 
      * @param key key
      * @return current time from registry center

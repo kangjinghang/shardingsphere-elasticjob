@@ -27,27 +27,27 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Job registry.
+ * Job registry. 维护了单个 Elastic-Job-Lite 进程内作业相关信息，可以理解成其专属的 Spring IOC 容器。因此，其本身是一个单例。相当于作业执行上下文，管有作业的状态，调度器，注册中心
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class JobRegistry {
-    
+    // 单例
     private static volatile JobRegistry instance;
-    
+    // 作业调度控制器集合，key：作业名称。每一个 job 都有一个对应的 JobScheduleController
     private final Map<String, JobScheduleController> schedulerMap = new ConcurrentHashMap<>();
-    
+    // 注册中心集合，key：作业名称
     private final Map<String, CoordinatorRegistryCenter> regCenterMap = new ConcurrentHashMap<>();
-    
+    // 作业运行实例集合，key：作业名称。每一个 job 都有一个对应的 job 实例
     private final Map<String, JobInstance> jobInstanceMap = new ConcurrentHashMap<>();
-    
+    // 运行中作业集合，key：作业名字
     private final Map<String, Boolean> jobRunningMap = new ConcurrentHashMap<>();
-    
+    // 作业总分片数量集合，key：作业名字
     private final Map<String, Integer> currentShardingTotalCountMap = new ConcurrentHashMap<>();
     
     /**
-     * Get instance of job registry.
+     * Get instance of job registry. 获取作业注册表实例
      * 
-     * @return instance of job registry
+     * @return instance of job registry 作业注册表实例
      */
     public static JobRegistry getInstance() {
         if (null == instance) {
@@ -61,14 +61,14 @@ public final class JobRegistry {
     }
     
     /**
-     * Register registry center.
+     * Register registry center. 添加注册中心缓存
      *
      * @param jobName job name
      * @param regCenter registry center
      */
     public void registerRegistryCenter(final String jobName, final CoordinatorRegistryCenter regCenter) {
         regCenterMap.put(jobName, regCenter);
-        regCenter.addCacheData("/" + jobName);
+        regCenter.addCacheData("/" + jobName); // 作业初始化注册时，初始化缓存
     }
     
     /**
@@ -152,10 +152,10 @@ public final class JobRegistry {
     }
     
     /**
-     * Set sharding total count which running on current job server.
+     * Set sharding total count which running on current job server. 设置当前作业分片总数
      *
-     * @param jobName job name
-     * @param currentShardingTotalCount sharding total count which running on current job server
+     * @param jobName job name 作业名称
+     * @param currentShardingTotalCount sharding total count which running on current job server 当前分片总数
      */
     public void setCurrentShardingTotalCount(final String jobName, final int currentShardingTotalCount) {
         currentShardingTotalCountMap.put(jobName, currentShardingTotalCount);

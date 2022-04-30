@@ -27,11 +27,11 @@ import org.apache.shardingsphere.elasticjob.tracing.exception.TracingConfigurati
 public interface TracingListenerConfiguration<T> {
     
     /**
-     * Create tracing listener.
+     * Create tracing listener. 创建作业事件监听器
      * 
      * @param storage storage
-     * @return tracing listener
-     * @throws TracingConfigurationException tracing configuration exception
+     * @return tracing listener 作业事件监听器
+     * @throws TracingConfigurationException tracing configuration exception 作业事件监听器配置异常
      */
     TracingListener createTracingListener(T storage) throws TracingConfigurationException;
     

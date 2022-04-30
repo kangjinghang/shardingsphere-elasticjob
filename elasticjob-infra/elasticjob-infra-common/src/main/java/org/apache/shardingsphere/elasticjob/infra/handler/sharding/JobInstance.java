@@ -33,15 +33,15 @@ import java.lang.management.ManagementFactory;
 public final class JobInstance {
     
     public static final String DELIMITER = "@-@";
-    
+    // 作业实例主键， 格式：${IP}@-@${PID}。其中 PID 为进程编号。同一个 Elastic-Job-Lite 实例，不同的作业使用相同的作业实例主键。
     private String jobInstanceId;
     
     private String labels;
     
-    private String serverIp;
+    private String serverIp; // 默认作业服务器第一块网卡ip
     
     public JobInstance() {
-        this(IpUtils.getIp() + DELIMITER + ManagementFactory.getRuntimeMXBean().getName().split("@")[0]);
+        this(IpUtils.getIp() + DELIMITER + ManagementFactory.getRuntimeMXBean().getName().split("@")[0]);  // PID
     }
     
     public JobInstance(final String jobInstanceId) {

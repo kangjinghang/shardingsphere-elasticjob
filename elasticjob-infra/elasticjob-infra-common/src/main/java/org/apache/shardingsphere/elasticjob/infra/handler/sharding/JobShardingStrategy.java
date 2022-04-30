@@ -23,17 +23,17 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Job sharding strategy.
+ * Job sharding strategy. 作业分片策略接口
  */
 public interface JobShardingStrategy extends TypedSPI {
     
     /**
-     * Sharding job.
+     * Sharding job. 作业分片
      * 
-     * @param jobInstances all job instances which participate in sharding
-     * @param jobName job name
-     * @param shardingTotalCount sharding total count
-     * @return sharding result
+     * @param jobInstances all job instances which participate in sharding 所有参与分片的单元列表
+     * @param jobName job name 作业名称
+     * @param shardingTotalCount sharding total count 分片总数
+     * @return sharding result 分片结果
      */
     Map<JobInstance, List<Integer>> sharding(List<JobInstance> jobInstances, String jobName, int shardingTotalCount);
 }

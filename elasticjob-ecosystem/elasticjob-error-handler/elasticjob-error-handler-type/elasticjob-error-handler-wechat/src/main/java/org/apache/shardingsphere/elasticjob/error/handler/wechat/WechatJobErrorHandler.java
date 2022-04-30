@@ -40,7 +40,7 @@ import java.util.Collections;
 import java.util.Properties;
 
 /**
- * Job error handler for send error message via wechat.
+ * Job error handler for send error message via wechat. 企业微信通知策略，发送企业微信消息通知，但不中断作业执行。
  */
 @Slf4j
 public final class WechatJobErrorHandler implements JobErrorHandler {

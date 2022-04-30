@@ -20,7 +20,7 @@ package org.apache.shardingsphere.elasticjob.lite.internal.guarantee;
 import org.apache.shardingsphere.elasticjob.lite.internal.storage.JobNodePath;
 
 /**
- * Guarantee node.
+ * Guarantee node. 保证分布式任务全部开始和结束状态节点路径
  */
 public final class GuaranteeNode {
     

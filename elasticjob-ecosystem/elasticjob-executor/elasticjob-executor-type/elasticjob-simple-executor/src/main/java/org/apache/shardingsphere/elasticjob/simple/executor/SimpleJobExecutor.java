@@ -24,10 +24,10 @@ import org.apache.shardingsphere.elasticjob.executor.JobFacade;
 import org.apache.shardingsphere.elasticjob.executor.item.impl.ClassedJobItemExecutor;
 
 /**
- * Simple job executor.
+ * Simple job executor. 简单作业实现，平台提供其他常用作业实现，如 script，http，dataflow，和 SimpleJob 是一对配套实现
  */
 public final class SimpleJobExecutor implements ClassedJobItemExecutor<SimpleJob> {
-    
+    // 简单作业实现
     @Override
     public void process(final SimpleJob elasticJob, final JobConfiguration jobConfig, final JobFacade jobFacade, final ShardingContext shardingContext) {
         elasticJob.execute(shardingContext);

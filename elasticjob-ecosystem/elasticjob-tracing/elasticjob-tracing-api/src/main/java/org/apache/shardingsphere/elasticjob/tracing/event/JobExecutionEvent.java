@@ -26,35 +26,35 @@ import java.util.Date;
 import java.util.UUID;
 
 /**
- * Job execution event.
+ * Job execution event. 作业执行追踪事件
  */
 @RequiredArgsConstructor
 @AllArgsConstructor
 @Getter
 public final class JobExecutionEvent implements JobEvent {
-    
+    // 主键
     private String id = UUID.randomUUID().toString();
-    
+    // 主机名称
     private final String hostname;
-    
+    // IP
     private final String ip;
-    
+    // 作业任务ID
     private final String taskId;
-    
+    // 作业名字
     private final String jobName;
-    
+    // 执行来源
     private final ExecutionSource source;
-    
+    // 作业分片项
     private final int shardingItem;
-    
+    // 开始时间
     private Date startTime = new Date();
-    
+    // 结束时间
     @Setter
     private Date completeTime;
-    
+    // 是否执行成功
     @Setter
     private boolean success;
-    
+    // 执行失败原因
     @Setter
     private String failureCause;
     
@@ -85,10 +85,10 @@ public final class JobExecutionEvent implements JobEvent {
     }
     
     /**
-     * Execution source.
+     * Execution source. 执行来源
      */
     public enum ExecutionSource {
-        
+        //  普通触发执行，被错过执行，失效转移执行
         NORMAL_TRIGGER, MISFIRE, FAILOVER
     }
 }

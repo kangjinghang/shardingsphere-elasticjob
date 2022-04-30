@@ -33,15 +33,15 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Job tracing event bus.
+ * Job tracing event bus. 作业事件总线，提供了注册监听器、发布事件两个方法。
  */
 @Slf4j
 public final class JobTracingEventBus {
-
+    // 线程池执行服务对象
     private static final ExecutorService EXECUTOR_SERVICE;
-    
+    // 事件总线
     private final EventBus eventBus;
-    
+    // 是否注册作业监听器
     private volatile boolean isRegistered;
 
     static {
@@ -53,8 +53,8 @@ public final class JobTracingEventBus {
     }
     
     public JobTracingEventBus(final TracingConfiguration<?> tracingConfig) {
-        eventBus = new AsyncEventBus(EXECUTOR_SERVICE);
-        register(tracingConfig);
+        eventBus = new AsyncEventBus(EXECUTOR_SERVICE); // 创建 异步事件总线。注册在其上面的监听器是异步监听执行，事件发布无需阻塞等待监听器执行完逻辑，所以对性能不存在影响。
+        register(tracingConfig);  // 注册 事件监听器
     }
     
     private static ExecutorService createExecutorService(final int threadSize) {
@@ -63,7 +63,7 @@ public final class JobTracingEventBus {
         threadPoolExecutor.allowCoreThreadTimeOut(true);
         return MoreExecutors.listeningDecorator(MoreExecutors.getExitingExecutorService(threadPoolExecutor));
     }
-    
+    // 私有( private )方法，只能使用 TracingConfiguration 创建事件监听器注册。当不传递该配置时，意味着不开启事件追踪功能
     private void register(final TracingConfiguration<?> tracingConfig) {
         try {
             eventBus.register(TracingListenerFactory.getListener(tracingConfig));
@@ -74,7 +74,7 @@ public final class JobTracingEventBus {
     }
     
     /**
-     * Post event.
+     * Post event. 发布作业事件
      *
      * @param event job event
      */

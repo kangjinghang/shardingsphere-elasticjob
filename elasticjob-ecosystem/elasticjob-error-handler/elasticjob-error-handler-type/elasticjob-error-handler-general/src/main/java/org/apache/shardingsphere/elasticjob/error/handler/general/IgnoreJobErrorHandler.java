@@ -22,7 +22,7 @@ import org.apache.shardingsphere.elasticjob.error.handler.JobErrorHandler;
 import java.util.Properties;
 
 /**
- * Job error handler for ignore exception.
+ * Job error handler for ignore exception. 忽略异常策略，忽略系统异常且不中断作业执行。
  */
 public final class IgnoreJobErrorHandler implements JobErrorHandler {
     

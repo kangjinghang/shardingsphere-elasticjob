@@ -23,16 +23,16 @@ import org.apache.shardingsphere.elasticjob.lite.internal.sharding.ShardingServi
 import org.apache.shardingsphere.elasticjob.reg.base.CoordinatorRegistryCenter;
 
 /**
- * Scheduler facade.
+ * Scheduler facade. 为调度器提供内部服务的门面类
  */
 public final class SchedulerFacade {
-    
+    // 作业名称
     private final String jobName;
-    
+    // 主节点服务
     private final LeaderService leaderService;
-    
+    // 作业分片服务
     private final ShardingService shardingService;
-    
+    // 执行作业服务
     private final ExecutionService executionService;
     
     public SchedulerFacade(final CoordinatorRegistryCenter regCenter, final String jobName) {
@@ -52,11 +52,11 @@ public final class SchedulerFacade {
     }
     
     /**
-     * Shutdown instance.
+     * Shutdown instance. 终止作业调度
      */
     public void shutdownInstance() {
         if (leaderService.isLeader()) {
-            leaderService.removeLeader();
+            leaderService.removeLeader(); // 移除主节点
         }
         JobRegistry.getInstance().shutdown(jobName);
     }

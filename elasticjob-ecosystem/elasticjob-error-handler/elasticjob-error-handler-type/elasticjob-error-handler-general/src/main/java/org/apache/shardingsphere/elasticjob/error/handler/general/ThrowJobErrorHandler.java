@@ -23,7 +23,7 @@ import org.apache.shardingsphere.elasticjob.infra.exception.JobSystemException;
 import java.util.Properties;
 
 /**
- * Job error handler for throw exception.
+ * Job error handler for throw exception. 抛出异常策略，抛出系统异常并中断作业执行。
  */
 public final class ThrowJobErrorHandler implements JobErrorHandler {
     

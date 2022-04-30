@@ -48,7 +48,7 @@ public final class InstanceService {
     }
     
     /**
-     * Persist job online status.
+     * Persist job online status. 持久化作业运行实例上线相关信息
      */
     public void persistOnline() {
         jobNodeStorage.fillEphemeralJobNode(instanceNode.getLocalInstancePath(), instanceNode.getLocalInstanceValue());

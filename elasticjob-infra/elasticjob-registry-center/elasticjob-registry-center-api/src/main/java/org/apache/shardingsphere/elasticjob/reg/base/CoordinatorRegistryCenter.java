@@ -24,12 +24,12 @@ import org.apache.shardingsphere.elasticjob.reg.listener.DataChangedEventListene
 import java.util.List;
 
 /**
- * Coordinator registry center.
+ * Coordinator registry center.  znode 节点存取。用于协调分布式服务的注册中心，定义了持久节点、临时节点、持久顺序节点、临时顺序节点等目录服务接口方法，隐性的要求提供事务、分布式锁、数据订阅等特性。
  */
 public interface CoordinatorRegistryCenter extends RegistryCenter {
     
     /**
-     * Get value from registry center directly.
+     * Get value from registry center directly. 直接从 Zookeeper 获取
      * 
      * @param key key
      * @return value
@@ -37,7 +37,7 @@ public interface CoordinatorRegistryCenter extends RegistryCenter {
     String getDirectly(String key);
     
     /**
-     * Get children keys.
+     * Get children keys. 获取子节点名称集合(降序)
      * 
      * @param key key
      * @return children keys
@@ -45,7 +45,7 @@ public interface CoordinatorRegistryCenter extends RegistryCenter {
     List<String> getChildrenKeys(String key);
     
     /**
-     * Get children number.
+     * Get children number. 获取子节点数量
      *
      * @param key key
      * @return children number
@@ -53,7 +53,7 @@ public interface CoordinatorRegistryCenter extends RegistryCenter {
     int getNumChildren(String key);
     
     /**
-     * Persist ephemeral data.
+     * Persist ephemeral data. 存储临时节点数据。节点类型无法变更，因此如果数据已存在，需要先进行删除
      * 
      * @param key key
      * @param value value
@@ -61,7 +61,7 @@ public interface CoordinatorRegistryCenter extends RegistryCenter {
     void persistEphemeral(String key, String value);
     
     /**
-     * Persist sequential data.
+     * Persist sequential data. 存储顺序注册数据
      *
      * @param key key
      * @param value value
@@ -84,7 +84,7 @@ public interface CoordinatorRegistryCenter extends RegistryCenter {
     void addCacheData(String cachePath);
     
     /**
-     * Evict data from cache.
+     * Evict data from cache. 关闭作业缓存
      *
      * @param cachePath cache path
      */
@@ -99,10 +99,10 @@ public interface CoordinatorRegistryCenter extends RegistryCenter {
     Object getRawCache(String cachePath);
     
     /**
-     * Execute in leader.
+     * Execute in leader. 在主节点执行操作
      *
-     * @param key key
-     * @param callback callback of leader
+     * @param key key 分布式锁使用的节点，例如：leader/election/latch
+     * @param callback callback of leader 执行操作的回调
      */
     void executeInLeader(String key, LeaderExecutionCallback callback);
     

@@ -26,10 +26,10 @@ import java.util.Objects;
 import java.util.regex.Pattern;
 
 /**
- * Server node.
+ * Server node. 服务器节点路径
  */
 public final class ServerNode {
-    
+    // 服务器信息根节点
     public static final String ROOT = "servers";
     
     private static final String SERVERS = ROOT + "/%s";
@@ -54,7 +54,7 @@ public final class ServerNode {
     }
     
     /**
-     * Judge is server path for localhost or not.
+     * Judge is server path for localhost or not. 判断 path({appName}/{jobName}/servers/{serverIp}) 是否等于 当前作业服务器ip
      *
      * @param path path to be judged
      * @return is server path for localhost or not

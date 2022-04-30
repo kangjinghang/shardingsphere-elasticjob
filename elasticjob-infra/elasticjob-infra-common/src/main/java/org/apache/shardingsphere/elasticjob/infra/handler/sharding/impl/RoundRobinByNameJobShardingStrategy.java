@@ -25,8 +25,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Sharding strategy which for round robin by name job.
- */
+ * Sharding strategy which for round robin by name job. 根据作业名的哈希值对作业节点列表进行轮转的分片策略。这里的轮转怎么定义呢？如果有 3 台作业节点，顺序为 [0, 1, 2]，如果作业名的哈希值根据作业分片总数取模为 1, 作业节点顺序变为 [1, 2, 0]
+ */ // 分片的目的，是将作业的负载合理的分配到不同的作业节点上，要避免分片策略总是让固定的作业节点负载特别大，其它工作节点负载特别小。
 public final class RoundRobinByNameJobShardingStrategy implements JobShardingStrategy {
     
     private final AverageAllocationJobShardingStrategy averageAllocationJobShardingStrategy = new AverageAllocationJobShardingStrategy();
@@ -38,7 +38,7 @@ public final class RoundRobinByNameJobShardingStrategy implements JobShardingStr
     
     private List<JobInstance> rotateServerList(final List<JobInstance> shardingUnits, final String jobName) {
         int shardingUnitsSize = shardingUnits.size();
-        int offset = Math.abs(jobName.hashCode()) % shardingUnitsSize;
+        int offset = Math.abs(jobName.hashCode()) % shardingUnitsSize; // 轮转开始位置
         if (0 == offset) {
             return shardingUnits;
         }

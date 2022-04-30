@@ -20,8 +20,8 @@ package org.apache.shardingsphere.elasticjob.lite.internal.storage;
 import lombok.RequiredArgsConstructor;
 
 /**
- * Job node path.
- * 
+ * Job node path. 作业节点路径类。作业节点是在普通的节点前加上作业名称的前缀。
+ *
  * <p>
  * Job node is add job name as prefix.
  * </p>
@@ -39,13 +39,13 @@ public final class JobNodePath {
     
     private static final String SHARDING_NODE = "sharding";
     
-    private final String jobName;
+    private final String jobName; // 作业名字，使用 JobCoreConfiguration.jobName 属性配置
     
     /**
-     * Get full path.
+     * Get full path. 获取节点全路径
      * 
-     * @param node node
-     * @return full path
+     * @param node node 只是简单的作业节点名称
+     * @return full path 节点全路径
      */
     public String getFullPath(final String node) {
         return String.format("/%s/%s", jobName, node);

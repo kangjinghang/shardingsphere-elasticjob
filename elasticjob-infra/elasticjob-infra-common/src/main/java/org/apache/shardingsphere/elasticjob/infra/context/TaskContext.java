@@ -72,7 +72,7 @@ public final class TaskContext {
     }
     
     /**
-     * Get task context via task ID.
+     * Get task context via task ID. 对作业任务ID( taskId ) 解析，获取任务上下文
      *
      * @param id task ID
      * @return task context

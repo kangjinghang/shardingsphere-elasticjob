@@ -32,12 +32,12 @@ import org.apache.shardingsphere.elasticjob.reg.base.CoordinatorRegistryCenter;
 import java.util.Collection;
 
 /**
- * Listener manager facade.
+ * Listener manager facade.  作业注册中心的监听器管理者。管理者两类组件：监听管理器 和 注册中心连接状态监听器
  */
 public final class ListenerManager {
     
     private final JobNodeStorage jobNodeStorage;
-    
+    // 不同服务的监听管理器，都继承作业注册中心的监听器管理者的抽象类( AbstractListenerManager )
     private final ElectionListenerManager electionListenerManager;
     
     private final ShardingListenerManager shardingListenerManager;
@@ -53,7 +53,7 @@ public final class ListenerManager {
     private final RescheduleListenerManager rescheduleListenerManager;
 
     private final GuaranteeListenerManager guaranteeListenerManager;
-    
+    // 注册中心连接状态监听器
     private final RegistryCenterConnectionStateListener regCenterConnectionStateListener;
     
     public ListenerManager(final CoordinatorRegistryCenter regCenter, final String jobName, final Collection<ElasticJobListener> elasticJobListeners) {
@@ -70,7 +70,7 @@ public final class ListenerManager {
     }
     
     /**
-     * Start all listeners.
+     * Start all listeners. 开启所有监听器
      */
     public void startAllListeners() {
         electionListenerManager.start();
@@ -81,6 +81,6 @@ public final class ListenerManager {
         triggerListenerManager.start();
         rescheduleListenerManager.start();
         guaranteeListenerManager.start();
-        jobNodeStorage.addConnectionStateListener(regCenterConnectionStateListener);
+        jobNodeStorage.addConnectionStateListener(regCenterConnectionStateListener); // 开启 注册中心连接状态监听器
     }
 }

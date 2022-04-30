@@ -38,8 +38,8 @@ public final class GuaranteeService {
     }
     
     /**
-     * Register start.
-     *
+     * Register start. 注册作业分片项开始运行
+     * 数据节点 /${JOB_NAME}/guarantee/started/${ITEM_INDEX} 为永久节点，存储空串( "" )
      * @param shardingItems to be registered sharding items
      */
     public void registerStart(final Collection<Integer> shardingItems) {
@@ -64,17 +64,17 @@ public final class GuaranteeService {
     }
     
     /**
-     * Judge whether job's sharding items are all started.
+     * Judge whether job's sharding items are all started.  判断是否所有的任务分片均启动完毕
      *
-     * @return job's sharding items are all started or not
+     * @return job's sharding items are all started or not 是否所有的任务分片均启动完毕
      */
-    public boolean isAllStarted() {
+    public boolean isAllStarted() { // 当 /${JOB_NAME}/guarantee/started/ 目录下，所有作业分片项都开始运行，即运行总数等于作业分片总数( ShardingTotalCount )，代表所有的任务均启动完毕
         return jobNodeStorage.isJobNodeExisted(GuaranteeNode.STARTED_ROOT)
                 && configService.load(false).getShardingTotalCount() == jobNodeStorage.getJobNodeChildrenKeys(GuaranteeNode.STARTED_ROOT).size();
     }
     
     /**
-     * Clear all started job's info.
+     * Clear all started job's info. 清理所有任务启动信息，删除 /${JOB_NAME}/guarantee/started/ 节点
      */
     public void clearAllStartedInfo() {
         jobNodeStorage.removeJobNodeIfExisted(GuaranteeNode.STARTED_ROOT);

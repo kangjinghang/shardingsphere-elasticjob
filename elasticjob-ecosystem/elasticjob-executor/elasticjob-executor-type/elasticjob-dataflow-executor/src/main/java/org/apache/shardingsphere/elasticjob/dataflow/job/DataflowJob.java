@@ -23,8 +23,8 @@ import org.apache.shardingsphere.elasticjob.api.ShardingContext;
 import java.util.List;
 
 /**
- * Dataflow job.
- * 
+ * Dataflow job. 数据流作业，用于处理数据流，需实现 DataflowJob 接口。该接口提供 2 个方法可供覆盖，分别用于抓取 (fetchData)和处理 (processData) 数据。
+ * "streaming.process"，是否开启流式处理，默认值 false
  * @param <T> type of data
  */
 public interface DataflowJob<T> extends ElasticJob {

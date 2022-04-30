@@ -26,10 +26,10 @@ import javax.sql.DataSource;
 import java.sql.SQLException;
 
 /**
- * RDB tracing listener.
+ * RDB tracing listener. 作业事件数据库监听器
  */
 public final class RDBTracingListener implements TracingListener {
-    
+
     private final RDBJobEventStorage repository;
     
     public RDBTracingListener(final DataSource dataSource) throws SQLException {

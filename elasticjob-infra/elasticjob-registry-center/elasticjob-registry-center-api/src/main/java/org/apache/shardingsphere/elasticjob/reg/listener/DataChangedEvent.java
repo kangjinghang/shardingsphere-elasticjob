@@ -21,12 +21,12 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 /**
- * Data changed event.
+ * Data changed event. 节点数据变化
  */
 @RequiredArgsConstructor
 @Getter
 public final class DataChangedEvent {
-    
+    // 事件类型
     private final Type type;
     
     private final String key;

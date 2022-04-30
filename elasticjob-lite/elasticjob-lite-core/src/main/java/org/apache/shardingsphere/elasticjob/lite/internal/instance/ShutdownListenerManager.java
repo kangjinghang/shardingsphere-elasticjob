@@ -50,21 +50,21 @@ public final class ShutdownListenerManager extends AbstractListenerManager {
     public void start() {
         addDataListener(new InstanceShutdownStatusJobListener());
     }
-    
+    //  主节点进程远程关闭
     class InstanceShutdownStatusJobListener implements DataChangedEventListener {
         
         @Override
         public void onChange(final DataChangedEvent event) {
             if (!JobRegistry.getInstance().isShutdown(jobName) && !JobRegistry.getInstance().getJobScheduleController(jobName).isPaused()
-                    && isRemoveInstance(event.getKey(), event.getType()) && !isReconnectedRegistryCenter()) {
+                    && isRemoveInstance(event.getKey(), event.getType()) && !isReconnectedRegistryCenter()) {  // 作业未暂停调度 && 移除【运行实例】事件 && 运行实例被移除
                 schedulerFacade.shutdownInstance();
             }
         }
-        
+        // 移除【运行实例】事件
         private boolean isRemoveInstance(final String path, final Type eventType) {
             return instanceNode.isLocalInstancePath(path) && Type.DELETED == eventType;
         }
-        
+        // 运行实例被移除
         private boolean isReconnectedRegistryCenter() {
             return instanceService.isLocalJobInstanceExisted();
         }

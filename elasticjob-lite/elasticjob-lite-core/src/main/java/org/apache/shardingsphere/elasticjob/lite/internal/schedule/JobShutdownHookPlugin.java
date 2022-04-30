@@ -66,7 +66,7 @@ public final class JobShutdownHookPlugin implements SchedulerPlugin {
         }
         LeaderService leaderService = new LeaderService(regCenter, jobName);
         if (leaderService.isLeader()) {
-            leaderService.removeLeader();
+            leaderService.removeLeader(); // 移除主节点，退出进程，若该进程为主节点，需要将自己移除。会触发重新选举
         }
         new InstanceService(regCenter, jobName).removeInstance();
     }

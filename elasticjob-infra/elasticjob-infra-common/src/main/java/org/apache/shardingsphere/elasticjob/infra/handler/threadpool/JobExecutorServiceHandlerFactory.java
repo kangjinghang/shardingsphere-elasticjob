@@ -36,9 +36,9 @@ public final class JobExecutorServiceHandlerFactory {
     }
     
     /**
-     * Get job executor service handler.
+     * Get job executor service handler. 根据 type 实例化 JobExecutorServiceHandler 对象
      *
-     * @param type executor service handler type
+     * @param type executor service handler type CPU/SINGLE_THREAD
      * @return executor service handler
      */
     public static JobExecutorServiceHandler getHandler(final String type) {

@@ -46,32 +46,32 @@ public final class ExecutionService {
     }
         
     /**
-     * Register job begin.
+     * Register job begin. 注册作业启动信息
      * 
      * @param shardingContexts sharding contexts
      */
     public void registerJobBegin(final ShardingContexts shardingContexts) {
         JobRegistry.getInstance().setJobRunning(jobName, true);
-        if (!configService.load(true).isMonitorExecution()) {
+        if (!configService.load(true).isMonitorExecution()) { // 仅当作业配置设置监控作业运行时状态( LiteJobConfiguration.monitorExecution = true )时，记录作业运行状态
             return;
         }
         for (int each : shardingContexts.getShardingItemParameters().keySet()) {
-            jobNodeStorage.fillEphemeralJobNode(ShardingNode.getRunningNode(each), "");
+            jobNodeStorage.fillEphemeralJobNode(ShardingNode.getRunningNode(each), ""); // 记录分配的作业分片项正在运行中，写入 zk 分片项 running 状态
         }
     }
     
     /**
-     * Register job completed.
+     * Register job completed.  注册作业完成信息
      * 
      * @param shardingContexts sharding contexts
      */
     public void registerJobCompleted(final ShardingContexts shardingContexts) {
         JobRegistry.getInstance().setJobRunning(jobName, false);
-        if (!configService.load(true).isMonitorExecution()) {
+        if (!configService.load(true).isMonitorExecution()) { // 仅当作业配置设置监控作业运行时状态( LiteJobConfiguration.monitorExecution = true )，移除作业运行状态。
             return;
         }
         for (int each : shardingContexts.getShardingItemParameters().keySet()) {
-            jobNodeStorage.removeJobNodeIfExisted(ShardingNode.getRunningNode(each));
+            jobNodeStorage.removeJobNodeIfExisted(ShardingNode.getRunningNode(each)); // 移除分配的作业分片项正在运行中的标记，表示作业分片项不在运行中状态。
         }
     }
     
@@ -131,21 +131,21 @@ public final class ExecutionService {
     }
     
     /**
-     * Set misfire flag if sharding items still running.
-     * 
+     * Set misfire flag if sharding items still running.  如果这些分片仍在运行状态，分片将被设置为 misfired 标志
+     * 当分配的作业分片项里存在【任意】一个分片正在运行中，所有被分配的分片项都会被设置为错过执行( misfire )，并不执行这些作业分片了。因为如果不进行跳过，则可能导致多个作业服务器同时运行某个作业分片。该功能依赖作业配置监控作业运行时状态( monitorExecution = true )时生效。
      * @param items sharding items need to be set misfire flag
-     * @return is misfired for this schedule time or not
+     * @return is misfired for this schedule time or not 是否在调度时间内 misfire
      */
     public boolean misfireIfHasRunningItems(final Collection<Integer> items) {
-        if (!hasRunningItems(items)) {
+        if (!hasRunningItems(items)) { // 如果没有正在运行的分片，返回 false，代表没有分片在调度时间内 misfire 了
             return false;
         }
-        setMisfire(items);
-        return true;
+        setMisfire(items); // 否则，将分片设置为 misfired 标志
+        return true; // 返回 true，代表有分片在调度时间内 misfire 了
     }
     
     /**
-     * Set misfire flag if sharding items still running.
+     * Set misfire flag if sharding items still running. 如果这些分片仍在运行，分片将被设置为 misfire 标志
      *
      * @param items sharding items need to be set misfire flag
      */
@@ -156,7 +156,7 @@ public final class ExecutionService {
     }
     
     /**
-     * Get misfired job sharding items.
+     * Get misfired job sharding items. 获取被错过执行的分片们
      * 
      * @param items sharding items need to be judged
      * @return misfired job sharding items
@@ -183,15 +183,15 @@ public final class ExecutionService {
     }
     
     /**
-     * Get disabled sharding items.
+     * Get disabled sharding items. 获取禁用的任务分片项
      *
-     * @param items sharding items need to be got
-     * @return disabled sharding items
+     * @param items sharding items need to be got 需要获取禁用的任务分片项
+     * @return disabled sharding items 禁用的任务分片项
      */
     public List<Integer> getDisabledItems(final List<Integer> items) {
         List<Integer> result = new ArrayList<>(items.size());
         for (int each : items) {
-            if (jobNodeStorage.isJobNodeExisted(ShardingNode.getDisabledNode(each))) {
+            if (jobNodeStorage.isJobNodeExisted(ShardingNode.getDisabledNode(each))) { // /${JOB_NAME}/sharding/${ITEM_ID}/disabled
                 result.add(each);
             }
         }

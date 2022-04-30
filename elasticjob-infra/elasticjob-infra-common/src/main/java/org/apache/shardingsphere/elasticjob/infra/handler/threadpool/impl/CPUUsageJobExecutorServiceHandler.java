@@ -18,7 +18,7 @@
 package org.apache.shardingsphere.elasticjob.infra.handler.threadpool.impl;
 
 /**
- * Job executor service handler with use CPU available processors.
+ * Job executor service handler with use CPU available processors. CPU 资源策略，根据 CPU 核数 * 2 创建作业处理线程池。
  */
 public final class CPUUsageJobExecutorServiceHandler extends AbstractJobExecutorServiceHandler {
     

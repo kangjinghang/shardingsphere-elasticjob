@@ -25,7 +25,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 /**
- * ElasticJob startup runner.
+ * ElasticJob startup runner.  spring bean 工厂获取 ScheduleJobBootstrap 实例，调度作业到本地 quartz
  */
 @Setter
 @Slf4j

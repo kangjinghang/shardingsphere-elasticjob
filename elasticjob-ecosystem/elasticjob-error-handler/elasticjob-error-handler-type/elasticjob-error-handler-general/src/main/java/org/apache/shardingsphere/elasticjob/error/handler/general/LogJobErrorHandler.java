@@ -23,7 +23,7 @@ import org.apache.shardingsphere.elasticjob.error.handler.JobErrorHandler;
 import java.util.Properties;
 
 /**
- * Job error handler for log error message.
+ * Job error handler for log error message. 记录日志策略，记录作业异常日志，但不中断作业执行。
  */
 @Slf4j
 public final class LogJobErrorHandler implements JobErrorHandler {

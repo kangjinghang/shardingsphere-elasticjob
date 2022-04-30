@@ -56,11 +56,11 @@ public final class JobErrorHandlerReloadable implements Reloadable<JobErrorHandl
         log.debug("JobErrorHandler reload occurred in the job '{}'. Change from '{}' to '{}'.", jobConfig.getJobName(), jobErrorHandlerType, newJobErrorHandlerType);
         reload(newJobErrorHandlerType, jobConfig.getProps());
     }
-    
+    // reload
     private void reload(final String jobErrorHandlerType, final Properties props) {
         jobErrorHandler.close();
         this.jobErrorHandlerType = jobErrorHandlerType;
-        this.props = (Properties) props.clone();
+        this.props = (Properties) props.clone(); // clone
         jobErrorHandler = JobErrorHandlerFactory.createHandler(jobErrorHandlerType, props)
                 .orElseThrow(() -> new JobConfigurationException("Cannot find job error handler type '%s'.", jobErrorHandlerType));
     }

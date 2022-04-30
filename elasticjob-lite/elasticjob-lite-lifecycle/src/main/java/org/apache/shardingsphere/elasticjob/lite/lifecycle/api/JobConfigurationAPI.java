@@ -25,24 +25,24 @@ import org.apache.shardingsphere.elasticjob.infra.pojo.JobConfigurationPOJO;
 public interface JobConfigurationAPI {
     
     /**
-     * get job configuration.
+     * get job configuration. 获取作业配置
      *
-     * @param jobName job name
-     * @return job configuration
+     * @param jobName job name 作业名称
+     * @return job configuration 作业配置对象
      */
     JobConfigurationPOJO getJobConfiguration(String jobName);
     
     /**
-     * Update job configuration.
+     * Update job configuration. 更新作业配置
      *
-     * @param jobConfig job configuration
+     * @param jobConfig job configuration 作业配置对象
      */
     void updateJobConfiguration(JobConfigurationPOJO jobConfig);
     
     /**
-     * Remove job configuration.
+     * Remove job configuration. 删除作业设置
      *
-     * @param jobName job name
+     * @param jobName job name 作业名称
      */
     void removeJobConfiguration(String jobName);
 }

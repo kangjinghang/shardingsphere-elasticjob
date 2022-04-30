@@ -28,18 +28,18 @@ import org.apache.shardingsphere.elasticjob.lite.internal.guarantee.GuaranteeSer
 import java.util.Set;
 
 /**
- * Distributed once elasticjob listener.
+ * Distributed once elasticjob listener. 分布式监听器，在分布式作业中【只执行一次】。若作业处理数据库数据，处理完成后只需一个节点完成数据清理任务即可。此类型任务处理复杂，需同步分布式环境下作业的状态同步，提供了超时设置来避免作业不同步导致的死锁，应谨慎使用。
  */
 public abstract class AbstractDistributeOnceElasticJobListener implements ElasticJobListener {
-    
+    // 开始超时时间
     private final long startedTimeoutMilliseconds;
-    
+    // 开始等待对象
     private final Object startedWait = new Object();
-    
+    // 完成超时时间
     private final long completedTimeoutMilliseconds;
-    
+    // 完成等待对象
     private final Object completedWait = new Object();
-    
+    // 保证分布式任务全部开始和结束状态的服务
     @Setter
     private GuaranteeService guaranteeService;
     
@@ -52,29 +52,29 @@ public abstract class AbstractDistributeOnceElasticJobListener implements Elasti
     
     @Override
     public final void beforeJobExecuted(final ShardingContexts shardingContexts) {
-        Set<Integer> shardingItems = shardingContexts.getShardingItemParameters().keySet();
+        Set<Integer> shardingItems = shardingContexts.getShardingItemParameters().keySet(); // 所有分片项，不只是有本机的
         if (shardingItems.isEmpty()) {
             return;
         }
-        guaranteeService.registerStart(shardingItems);
-        while (!guaranteeService.isRegisterStartSuccess(shardingItems)) {
-            BlockUtils.waitingShortTime();
+        guaranteeService.registerStart(shardingItems); // 注册作业分片项开始运行，/${JOB_NAME}/guarantee/started/${ITEM_INDEX}
+        while (!guaranteeService.isRegisterStartSuccess(shardingItems)) { // /${JOB_NAME}/guarantee/started/${ITEM_INDEX} 所有分片节点是否都已被创建
+            BlockUtils.waitingShortTime(); // 没有注册成功时则等待
         }
-        if (guaranteeService.isAllStarted()) {
-            doBeforeJobExecutedAtLastStarted(shardingContexts);
-            guaranteeService.clearAllStartedInfo();
+        if (guaranteeService.isAllStarted()) { // 判断是否所有的任务分片均启动完毕，当 /${JOB_NAME}/guarantee/started/ 目录下，所有作业分片项都开始运行，即运行总数等于作业分片总数( ShardingTotalCount )，代表所有的任务均启动完毕
+            doBeforeJobExecutedAtLastStarted(shardingContexts); // 分布式环境中最后一个作业节点执行前的执行的方法
+            guaranteeService.clearAllStartedInfo(); // 清理启动信息，删除 /${JOB_NAME}/guarantee/started/ 节点
             return;
         }
-        long before = timeService.getCurrentMillis();
+        long before = timeService.getCurrentMillis(); // 当前时间
         try {
             synchronized (startedWait) {
-                startedWait.wait(startedTimeoutMilliseconds);
+                startedWait.wait(startedTimeoutMilliseconds); // 不满足所有的分片项开始运行时，作业节点调用 Object#wait(...) 方法进行等待
             }
         } catch (final InterruptedException ex) {
             Thread.interrupted();
         }
-        if (timeService.getCurrentMillis() - before >= startedTimeoutMilliseconds) {
-            guaranteeService.clearAllStartedInfo();
+        if (timeService.getCurrentMillis() - before >= startedTimeoutMilliseconds) { // 等待超时
+            guaranteeService.clearAllStartedInfo();  // 清理启动信息，删除 /${JOB_NAME}/guarantee/started/ 节点
             handleTimeout(startedTimeoutMilliseconds);
         }
     }
@@ -113,14 +113,14 @@ public abstract class AbstractDistributeOnceElasticJobListener implements Elasti
     }
     
     /**
-     * Do before job executed at last sharding job started.
+     * Do before job executed at last sharding job started. 执行最后一个作业执行前的执行的方法，实现该抽象方法，完成自定义逻辑。
      *
      * @param shardingContexts sharding contexts
      */
     public abstract void doBeforeJobExecutedAtLastStarted(ShardingContexts shardingContexts);
     
     /**
-     * Do after job executed at last sharding job completed.
+     * Do after job executed at last sharding job completed. 分布式环境中最后一个作业执行后的执行的方法
      *
      * @param shardingContexts sharding contexts
      */

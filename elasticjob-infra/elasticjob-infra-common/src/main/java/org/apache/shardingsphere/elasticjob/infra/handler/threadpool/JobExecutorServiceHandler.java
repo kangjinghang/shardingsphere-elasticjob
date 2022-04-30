@@ -22,7 +22,7 @@ import org.apache.shardingsphere.elasticjob.infra.spi.TypedSPI;
 import java.util.concurrent.ExecutorService;
 
 /**
- * Job executor service handler.
+ * Job executor service handler. 线程池策略接口
  */
 public interface JobExecutorServiceHandler extends TypedSPI {
     

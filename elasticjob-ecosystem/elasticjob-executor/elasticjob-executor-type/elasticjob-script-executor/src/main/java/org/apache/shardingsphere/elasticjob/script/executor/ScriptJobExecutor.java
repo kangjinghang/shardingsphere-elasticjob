@@ -34,21 +34,21 @@ import java.io.IOException;
 import java.util.Properties;
 
 /**
- * Script job executor.
+ * Script job executor. 脚本作业执行器
  */
 public final class ScriptJobExecutor implements TypedJobItemExecutor {
-    
+    // 执行脚本
     @Override
     public void process(final ElasticJob elasticJob, final JobConfiguration jobConfig, final JobFacade jobFacade, final ShardingContext shardingContext) {
         CommandLine commandLine = CommandLine.parse(getScriptCommandLine(jobConfig.getProps()));
-        commandLine.addArgument(GsonFactory.getGson().toJson(shardingContext), false);
+        commandLine.addArgument(GsonFactory.getGson().toJson(shardingContext), false); // JSON 格式传递参数
         try {
             new DefaultExecutor().execute(commandLine);
         } catch (final IOException ex) {
             throw new JobSystemException("Execute script failure.", ex);
         }
     }
-    
+    // 返回脚本所在的文件目录路径
     private String getScriptCommandLine(final Properties props) {
         String result = props.getProperty(ScriptJobProperties.SCRIPT_KEY);
         if (Strings.isNullOrEmpty(result)) {

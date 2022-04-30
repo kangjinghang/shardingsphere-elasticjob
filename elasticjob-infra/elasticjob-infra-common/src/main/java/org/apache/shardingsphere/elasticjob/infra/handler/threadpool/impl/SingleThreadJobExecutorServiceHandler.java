@@ -18,7 +18,7 @@
 package org.apache.shardingsphere.elasticjob.infra.handler.threadpool.impl;
 
 /**
- * Job executor service handler with single thread.
+ * Job executor service handler with single thread. 单线程策略，使用单线程处理作业。
  */
 public final class SingleThreadJobExecutorServiceHandler extends AbstractJobExecutorServiceHandler {
     

@@ -40,7 +40,7 @@ import java.util.Date;
 import java.util.Properties;
 
 /**
- * Job error handler for send error message via email.
+ * Job error handler for send error message via email. 邮件通知策略，发送邮件消息通知，但不中断作业执行。
  */
 @Slf4j
 public final class EmailJobErrorHandler implements JobErrorHandler {

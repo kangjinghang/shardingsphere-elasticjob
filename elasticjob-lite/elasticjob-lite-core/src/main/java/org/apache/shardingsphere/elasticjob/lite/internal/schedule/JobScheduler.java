@@ -48,7 +48,7 @@ import java.util.Properties;
 import java.util.stream.Collectors;
 
 /**
- * Job scheduler.
+ * Job scheduler. elastic-job 的作业调度器，作业执行环境初始化，构建和初始化 quartz 的 scheduler 和 jobDetail
  */
 public final class JobScheduler {
     
@@ -57,17 +57,17 @@ public final class JobScheduler {
     }
     
     private static final String JOB_EXECUTOR_DATA_MAP_KEY = "jobExecutor";
-    
+    // 注册中心
     @Getter
     private final CoordinatorRegistryCenter regCenter;
-    
+    // 作业配置
     @Getter
     private final JobConfiguration jobConfig;
     
     private final SetUpFacade setUpFacade;
-    
+    // 调度器门面对象
     private final SchedulerFacade schedulerFacade;
-    
+    // 作业门面对象
     private final LiteJobFacade jobFacade;
     
     private final ElasticJobExecutor jobExecutor;
@@ -78,14 +78,14 @@ public final class JobScheduler {
     public JobScheduler(final CoordinatorRegistryCenter regCenter, final ElasticJob elasticJob, final JobConfiguration jobConfig) {
         Preconditions.checkArgument(null != elasticJob, "Elastic job cannot be null.");
         this.regCenter = regCenter;
-        Collection<ElasticJobListener> jobListeners = getElasticJobListeners(jobConfig);
+        Collection<ElasticJobListener> jobListeners = getElasticJobListeners(jobConfig); // 设置 作业监听器
         setUpFacade = new SetUpFacade(regCenter, jobConfig.getJobName(), jobListeners);
         String jobClassName = JobClassNameProviderFactory.getProvider().getJobClassName(elasticJob);
         this.jobConfig = setUpFacade.setUpJobConfiguration(jobClassName, jobConfig);
-        schedulerFacade = new SchedulerFacade(regCenter, jobConfig.getJobName());
-        jobFacade = new LiteJobFacade(regCenter, jobConfig.getJobName(), jobListeners, findTracingConfiguration().orElse(null));
+        schedulerFacade = new SchedulerFacade(regCenter, jobConfig.getJobName()); // 设置 调度器门面对象
+        jobFacade = new LiteJobFacade(regCenter, jobConfig.getJobName(), jobListeners, findTracingConfiguration().orElse(null)); // 设置 作业门面对象
         validateJobProperties();
-        jobExecutor = new ElasticJobExecutor(elasticJob, this.jobConfig, jobFacade);
+        jobExecutor = new ElasticJobExecutor(elasticJob, this.jobConfig, jobFacade); // 创建作业执行器
         setGuaranteeServiceForElasticJobListeners(regCenter, jobListeners);
         jobScheduleController = createJobScheduleController();
     }
@@ -133,21 +133,21 @@ public final class JobScheduler {
             }
         }
     }
-    
+    // 创建 quartz 调度器的封装 JobScheduleController，并且初始化作业，作业开始调度。
     private JobScheduleController createJobScheduleController() {
         JobScheduleController result = new JobScheduleController(createScheduler(), createJobDetail(), getJobConfig().getJobName());
-        JobRegistry.getInstance().registerJob(getJobConfig().getJobName(), result);
-        registerStartUpInfo();
+        JobRegistry.getInstance().registerJob(getJobConfig().getJobName(), result); // 添加 作业调度控制器实例
+        registerStartUpInfo(); // 注册 作业启动信息
         return result;
     }
-    
+    // 创建 quartz 的 Scheduler
     private Scheduler createScheduler() {
         Scheduler result;
         try {
             StdSchedulerFactory factory = new StdSchedulerFactory();
             factory.initialize(getQuartzProps());
             result = factory.getScheduler();
-            result.getListenerManager().addTriggerListener(schedulerFacade.newJobTriggerListener());
+            result.getListenerManager().addTriggerListener(schedulerFacade.newJobTriggerListener()); // 添加 triggerListener，使用 TriggerListener 监听被错过执行的作业分片项
         } catch (final SchedulerException ex) {
             throw new JobSystemException(ex);
         }
@@ -157,23 +157,23 @@ public final class JobScheduler {
     private Properties getQuartzProps() {
         Properties result = new Properties();
         result.put("org.quartz.threadPool.class", SimpleThreadPool.class.getName());
-        result.put("org.quartz.threadPool.threadCount", "1");
+        result.put("org.quartz.threadPool.threadCount", "1"); // Quartz 线程数：1，一个作业( ElasticJob )的调度，需要配置独有的一个作业调度器( JobScheduler )，两者是 1 : 1 的关系。
         result.put("org.quartz.scheduler.instanceName", getJobConfig().getJobName());
-        result.put("org.quartz.jobStore.misfireThreshold", "1");
-        result.put("org.quartz.plugin.shutdownhook.class", JobShutdownHookPlugin.class.getName());
-        result.put("org.quartz.plugin.shutdownhook.cleanShutdown", Boolean.TRUE.toString());
+        result.put("org.quartz.jobStore.misfireThreshold", "1"); // 设置最大允许超过 1 毫秒，作业分片项即被视为错过执行
+        result.put("org.quartz.plugin.shutdownhook.class", JobShutdownHookPlugin.class.getName()); // 作业关闭钩子
+        result.put("org.quartz.plugin.shutdownhook.cleanShutdown", Boolean.TRUE.toString()); // 关闭时，清理所有资源
         return result;
     }
-    
+    // 创建 quartz 的 JobDetail
     private JobDetail createJobDetail() {
-        JobDetail result = JobBuilder.newJob(LiteJob.class).withIdentity(getJobConfig().getJobName()).build();
-        result.getJobDataMap().put(JOB_EXECUTOR_DATA_MAP_KEY, jobExecutor);
+        JobDetail result = JobBuilder.newJob(LiteJob.class).withIdentity(getJobConfig().getJobName()).build(); // 参数是 LiteJob，因此，每次 Quartz 到达调度时间时，会创建该对象进行作业执行。
+        result.getJobDataMap().put(JOB_EXECUTOR_DATA_MAP_KEY, jobExecutor); // 将 ElasticJobExecutor 注入
         return result;
     }
-    
+    // 注册作业启动信息
     private void registerStartUpInfo() {
-        JobRegistry.getInstance().registerRegistryCenter(jobConfig.getJobName(), regCenter);
-        JobRegistry.getInstance().addJobInstance(jobConfig.getJobName(), new JobInstance());
+        JobRegistry.getInstance().registerRegistryCenter(jobConfig.getJobName(), regCenter); // 添加 注册中心实例
+        JobRegistry.getInstance().addJobInstance(jobConfig.getJobName(), new JobInstance()); // 添加 作业运行实例
         JobRegistry.getInstance().setCurrentShardingTotalCount(jobConfig.getJobName(), jobConfig.getShardingTotalCount());
         setUpFacade.registerStartUpInfo(!jobConfig.isDisabled());
     }

@@ -22,7 +22,7 @@ import org.apache.shardingsphere.elasticjob.reg.base.CoordinatorRegistryCenter;
 import org.apache.shardingsphere.elasticjob.reg.listener.DataChangedEventListener;
 
 /**
- * Listener manager.
+ * Listener manager. 作业注册中心的监听器管理者的抽象类，其他服务监听器管理者需要继承此类，实现服务的监听管理接入的监听器实现
  */
 public abstract class AbstractListenerManager {
     
@@ -33,10 +33,10 @@ public abstract class AbstractListenerManager {
     }
     
     /**
-     * Start listener.
+     * Start listener. 开启监听器，将作业注册中心的监听器添加到注册中心 CuratorCache 的监听者里
      */
-    public abstract void start();
-    
+    public abstract void start(); // 子类实现此方法实现监听器初始化。目前所有子类的实现都是将自己管理的注册中心监听器调用 #addDataListener()
+    // 添加注册中心监听器
     protected void addDataListener(final DataChangedEventListener listener) {
         jobNodeStorage.addDataListener(listener);
     }

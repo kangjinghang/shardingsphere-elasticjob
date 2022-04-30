@@ -27,19 +27,19 @@ import org.apache.shardingsphere.elasticjob.executor.item.impl.ClassedJobItemExe
 import java.util.List;
 
 /**
- * Dataflow job executor.
+ * Dataflow job executor. 数据流作业执行器
  */
 public final class DataflowJobExecutor implements ClassedJobItemExecutor<DataflowJob> {
-    
+    // 当作业配置设置流式处理数据( DataflowJobConfiguration.streamingProcess = true ) 时，调用 #streamingExecute() 不断加载数据，不断处理数据，直到数据为空 或者 作业不适合继续运行
     @Override
     public void process(final DataflowJob elasticJob, final JobConfiguration jobConfig, final JobFacade jobFacade, final ShardingContext shardingContext) {
-        if (Boolean.parseBoolean(jobConfig.getProps().getOrDefault(DataflowJobProperties.STREAM_PROCESS_KEY, false).toString())) {
+        if (Boolean.parseBoolean(jobConfig.getProps().getOrDefault(DataflowJobProperties.STREAM_PROCESS_KEY, false).toString())) {  // 流式处理数据
             streamingExecute(elasticJob, jobConfig, jobFacade, shardingContext);
-        } else {
+        } else { // 当作业配置不设置流式处理数据( DataflowJobConfiguration.streamingProcess = false ) 时，调用 #oneOffExecute() 一次加载数据，一次处理数据
             oneOffExecute(elasticJob, shardingContext);
         }
     }
-    
+    // 流式处理
     private void streamingExecute(final DataflowJob elasticJob, final JobConfiguration jobConfig, final JobFacade jobFacade, final ShardingContext shardingContext) {
         List<Object> data = fetchData(elasticJob, shardingContext);
         while (null != data && !data.isEmpty()) {
@@ -50,23 +50,23 @@ public final class DataflowJobExecutor implements ClassedJobItemExecutor<Dataflo
             data = fetchData(elasticJob, shardingContext);
         }
     }
-    
+    // 作业需要重新分片，所以不适合继续流式数据处理
     private boolean isEligibleForJobRunning(final JobConfiguration jobConfig, final JobFacade jobFacade) {
-        return !jobFacade.isNeedSharding() && Boolean.parseBoolean(jobConfig.getProps().getOrDefault(DataflowJobProperties.STREAM_PROCESS_KEY, false).toString());
+        return !jobFacade.isNeedSharding() && Boolean.parseBoolean(jobConfig.getProps().getOrDefault(DataflowJobProperties.STREAM_PROCESS_KEY, false).toString()); // 作业不需要重新分片
     }
-    
+    // 一次处理
     private void oneOffExecute(final DataflowJob elasticJob, final ShardingContext shardingContext) {
         List<Object> data = fetchData(elasticJob, shardingContext);
         if (null != data && !data.isEmpty()) {
             processData(elasticJob, shardingContext, data);
         }
     }
-    
+    // 加载数据
     @SuppressWarnings("unchecked")
     private List<Object> fetchData(final DataflowJob elasticJob, final ShardingContext shardingContext) {
         return elasticJob.fetchData(shardingContext);
     }
-    
+    // 处理数据
     @SuppressWarnings("unchecked")
     private void processData(final DataflowJob elasticJob, final ShardingContext shardingContext, final List<Object> data) {
         elasticJob.processData(shardingContext, data);

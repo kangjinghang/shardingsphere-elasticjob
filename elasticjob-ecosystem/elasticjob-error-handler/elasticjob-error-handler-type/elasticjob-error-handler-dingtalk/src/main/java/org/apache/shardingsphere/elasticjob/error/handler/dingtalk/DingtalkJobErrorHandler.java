@@ -48,7 +48,7 @@ import java.util.Collections;
 import java.util.Properties;
 
 /**
- * Job error handler for send error message via dingtalk.
+ * Job error handler for send error message via dingtalk. 钉钉通知策略，发送钉钉消息通知，但不中断作业执行。
  */
 @Slf4j
 public final class DingtalkJobErrorHandler implements JobErrorHandler {

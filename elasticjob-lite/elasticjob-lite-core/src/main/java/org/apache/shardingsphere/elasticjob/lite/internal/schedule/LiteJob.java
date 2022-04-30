@@ -23,11 +23,11 @@ import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 
 /**
- * Lite job class.
+ * Lite job class. 实现了 quartz 的 job 接口，作为 quartz 与 elastic-job 作业的桥接
  */
 @Setter
 public final class LiteJob implements Job {
-    
+    // 用 quartz 的参数机制注入
     private ElasticJobExecutor jobExecutor;
     
     @Override

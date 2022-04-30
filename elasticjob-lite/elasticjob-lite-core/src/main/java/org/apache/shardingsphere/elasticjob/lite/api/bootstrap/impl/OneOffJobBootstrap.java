@@ -27,7 +27,7 @@ import org.apache.shardingsphere.elasticjob.lite.internal.schedule.JobScheduler;
 import org.apache.shardingsphere.elasticjob.reg.base.CoordinatorRegistryCenter;
 
 /**
- * One off job bootstrap.
+ * One off job bootstrap. 使用 JobScheduler 调度作业
  */
 public final class OneOffJobBootstrap implements JobBootstrap {
     

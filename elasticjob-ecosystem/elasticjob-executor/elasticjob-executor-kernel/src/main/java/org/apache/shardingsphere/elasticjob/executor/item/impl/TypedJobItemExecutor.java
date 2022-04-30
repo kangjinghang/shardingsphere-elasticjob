@@ -21,8 +21,8 @@ import org.apache.shardingsphere.elasticjob.api.ElasticJob;
 import org.apache.shardingsphere.elasticjob.executor.item.JobItemExecutor;
 import org.apache.shardingsphere.elasticjob.infra.spi.TypedSPI;
 
-/**
- * Typed job item executor.
+/** Type 类型的作业只需提供类型名称即可，开发者无需实现该作业接口，而是通过外置配置的方式使用。典型代表：Script 类型、HTTP 类型。
+ * Typed job item executor.  作业实现远程调用执行器，如 http，feign，不用实现作业类，作业进程是通用的执行节点，不会依赖作业业务
  */
 public interface TypedJobItemExecutor extends JobItemExecutor<ElasticJob>, TypedSPI {
 }

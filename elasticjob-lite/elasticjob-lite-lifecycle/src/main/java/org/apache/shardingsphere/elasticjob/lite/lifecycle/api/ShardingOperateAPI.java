@@ -18,23 +18,23 @@
 package org.apache.shardingsphere.elasticjob.lite.lifecycle.api;
 
 /**
- * Sharding operate API.
+ * Sharding operate API. 操作分片的 API
  */
 public interface ShardingOperateAPI {
     
     /**
-     * Disable job sharding item.
+     * Disable job sharding item. 禁用作业分片
      * 
-     * @param jobName job name
-     * @param item sharding item
+     * @param jobName job name 作业名称
+     * @param item sharding item 作业分片项
      */
     void disable(String jobName, String item);
     
     /**
-     * Enable job sharding item.
+     * Enable job sharding item. 启用作业分片
      *
-     * @param jobName job name
-     * @param item sharding item
+     * @param jobName job name 作业名称
+     * @param item sharding item 作业分片项
      */
     void enable(String jobName, String item);
 }

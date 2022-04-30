@@ -20,7 +20,7 @@ package org.apache.shardingsphere.elasticjob.lite.internal.setup;
 import org.apache.shardingsphere.elasticjob.api.ElasticJob;
 
 /**
- * Job class name provider.
+ * Job class name provider. 作业类名称提供策略，用于在不同的容器环境下提供准确的作业类名称。
  */
 public interface JobClassNameProvider {
     

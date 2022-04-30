@@ -28,7 +28,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
 /**
- * ElasticJob-Lite auto configuration.
+ * ElasticJob-Lite auto configuration.  自动配置主入口，import 其他的自动配置
  */
 @Configuration(proxyBeanMethods = false)
 @AutoConfigureAfter(DataSourceAutoConfiguration.class)

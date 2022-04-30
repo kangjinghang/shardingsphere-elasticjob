@@ -29,7 +29,7 @@ import java.util.Properties;
 import java.util.ServiceLoader;
 
 /**
- * Executor context.
+ * Executor context. 主要包括两个对象， {@link org.apache.shardingsphere.elasticjob.error.handler.JobErrorHandler} 和 {@link java.util.concurrent.ExecutorService}
  *
  * @see org.apache.shardingsphere.elasticjob.error.handler.JobErrorHandlerReloadable
  * @see org.apache.shardingsphere.elasticjob.infra.concurrent.ExecutorServiceReloadable
@@ -39,17 +39,17 @@ public final class ExecutorContext {
     static {
         ElasticJobServiceLoader.registerTypedService(Reloadable.class);
     }
-    
+    // Key：reloadable.getType() （java.util.concurrent.ExecutorService / org.apache.shardingsphere.elasticjob.error.handler.JobErrorHandler），Value：实现类对象
     private final Map<String, Reloadable<?>> reloadableItems = new LinkedHashMap<>();
     
     public ExecutorContext(final JobConfiguration jobConfig) {
-        ServiceLoader.load(Reloadable.class).forEach(each -> {
-            ElasticJobServiceLoader.newTypedServiceInstance(Reloadable.class, each.getType(), new Properties())
-                    .ifPresent(reloadable -> reloadableItems.put(reloadable.getType(), reloadable));
+        ServiceLoader.load(Reloadable.class).forEach(each -> { // SPI 读取所有 Reloadable 实现类（即 ExecutorServiceReloadable 和 JobErrorHandlerReloadable 两个接口的实现类）
+            ElasticJobServiceLoader.newTypedServiceInstance(Reloadable.class, each.getType(), new Properties()) // 依次实例化所有实现 Reloadable 接口的 SPI 对象
+                    .ifPresent(reloadable -> reloadableItems.put(reloadable.getType(), reloadable)); // 保存到 reloadableItems
         });
         initReloadable(jobConfig);
     }
-    
+    // 调用 ReloadablePostProcessor 接口的 init 方法，初始化 Reloadable 对象
     private void initReloadable(final JobConfiguration jobConfig) {
         reloadableItems.values().stream().filter(each -> each instanceof ReloadablePostProcessor).forEach(each -> ((ReloadablePostProcessor) each).init(jobConfig));
     }

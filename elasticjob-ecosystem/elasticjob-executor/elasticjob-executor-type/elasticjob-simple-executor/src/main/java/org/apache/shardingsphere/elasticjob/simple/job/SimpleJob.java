@@ -21,7 +21,7 @@ import org.apache.shardingsphere.elasticjob.api.ElasticJob;
 import org.apache.shardingsphere.elasticjob.api.ShardingContext;
 
 /**
- * Simple job.
+ * Simple job. 简单作业实现，未经任何封装的类型（平台提供其他常用作业实现，如 script，http，dataflow），和 SimpleJobExecutor 是一对配套实现
  */
 public interface SimpleJob extends ElasticJob {
     

@@ -24,7 +24,7 @@ import org.apache.shardingsphere.elasticjob.infra.exception.JobConfigurationExce
 import org.apache.shardingsphere.elasticjob.infra.spi.ElasticJobServiceLoader;
 
 /**
- * Job sharding strategy factory.
+ * Job sharding strategy factory. 作业分片策略工厂
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class JobShardingStrategyFactory {
@@ -36,10 +36,10 @@ public final class JobShardingStrategyFactory {
     }
     
     /**
-     * Get job sharding strategy.
+     * Get job sharding strategy. 获取作业分片策略实例
      * 
-     * @param type job sharding strategy type
-     * @return job sharding strategy
+     * @param type job sharding strategy type 作业分片策略 type
+     * @return job sharding strategy 作业分片策略实例
      */
     public static JobShardingStrategy getStrategy(final String type) {
         if (Strings.isNullOrEmpty(type)) {

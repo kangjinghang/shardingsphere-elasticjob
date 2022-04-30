@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Job node storage.
+ * Job node storage.  作业节点数据访问类
  */
 public final class JobNodeStorage {
     
@@ -45,10 +45,10 @@ public final class JobNodeStorage {
     }
     
     /**
-     * Judge is job node existed or not.
+     * Judge is job node existed or not. 判断作业节点是否存在
      * 
-     * @param node node
-     * @return is job node existed or not
+     * @param node node 作业节点名称
+     * @return is job node existed or not 作业节点是否存在
      */
     public boolean isJobNodeExisted(final String node) {
         return regCenter.isExisted(jobNodePath.getFullPath(node));
@@ -103,11 +103,11 @@ public final class JobNodeStorage {
     }
     
     /**
-     * Create job node if needed.
+     * Create job node if needed. 如果存在则创建作业节点
      * 
      * <p>Do not create node if root node not existed, which means job is shutdown.</p>
-     * 
-     * @param node node
+     *  如果作业根节点不存在表示作业已经停止, 不再继续创建节点
+     * @param node node 作业节点名称
      */
     public void createJobNodeIfNeeded(final String node) {
         if (isJobRootNodeExisted() && !isJobNodeExisted(node)) {
@@ -176,13 +176,13 @@ public final class JobNodeStorage {
     }
     
     /**
-     * Execute operations in transaction.
+     * Execute operations in transaction. 在事务中执行操作。
      * 
      * @param transactionOperations operations to be executed in transaction
      */
     public void executeInTransaction(final List<TransactionOperation> transactionOperations) {
         List<TransactionOperation> result = new ArrayList<>(transactionOperations.size() + 1);
-        result.add(TransactionOperation.opCheckExists("/"));
+        result.add(TransactionOperation.opCheckExists("/")); // 加上 check "/" 根节点的操作
         result.addAll(transactionOperations);
         try {
             regCenter.executeInTransaction(result);
@@ -194,11 +194,11 @@ public final class JobNodeStorage {
     }
     
     /**
-     * Execute in leader server.
-     * 
-     * @param latchNode node for leader latch
-     * @param callback execute callback
-     */
+     * Execute in leader server.  在主节点执行操作。Apache Curator 使用 Zookeeper 实现了两种分布式锁，LeaderLatch 是其中的一种。
+     * 使用一个 Zookeeper 节点路径创建一个 LeaderLatch，#start() 后，调用 #await() 等待拿到这把锁。如果有多个线程执行了相同节点路径的 LeaderLatch 的 #await() 后，同一时刻有且仅有一个线程可以继续执行，其他线程需要等待。当该线程释放( LeaderLatch#close() )后，下一个线程可以拿到该锁继续执行。
+     * @param latchNode node for leader latch 分布式锁使用的节点，例如：leader/election/latch
+     * @param callback execute callback 执行操作的回调
+     */ // 【方法上带有 Leader 关键字，实际非必须在主节点的操作，任何一个拿到分布式锁的作业节点都可以调用】
     public void executeInLeader(final String latchNode, final LeaderExecutionCallback callback) {
         regCenter.executeInLeader(jobNodePath.getFullPath(latchNode), callback);
     }
@@ -213,7 +213,7 @@ public final class JobNodeStorage {
     }
     
     /**
-     * Add data listener.
+     * Add data listener.  注册 znode 监听，将作业注册中心的监听器添加到注册中心 CuratorCache 的监听者里
      * 
      * @param listener data listener
      */

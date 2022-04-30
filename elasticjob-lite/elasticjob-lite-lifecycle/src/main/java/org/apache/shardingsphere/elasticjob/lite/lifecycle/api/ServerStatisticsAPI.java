@@ -22,21 +22,21 @@ import org.apache.shardingsphere.elasticjob.lite.lifecycle.domain.ServerBriefInf
 import java.util.Collection;
 
 /**
- * Server statistics API.
+ * Server statistics API. 作业服务器状态展示 API
  */
 public interface ServerStatisticsAPI {
     
     /**
-     * Get servers total count.
+     * Get servers total count. 获取作业服务器总数
      *
-     * @return servers total count
+     * @return servers total count 作业服务器总数
      */
     int getServersTotalCount();
     
     /**
-     * Get all servers brief info.
+     * Get all servers brief info. 获取所有作业服务器简明信息
      *
-     * @return all servers brief info
+     * @return all servers brief info 作业服务器简明信息集合
      */
     Collection<ServerBriefInfo> getAllServersBriefInfo();
 }

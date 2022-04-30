@@ -43,7 +43,7 @@ import java.util.ServiceLoader;
 import java.util.UUID;
 
 /**
- * RDB job event storage.
+ * RDB job event storage. 作业事件数据库存储
  */
 @Slf4j
 public final class RDBJobEventStorage {
@@ -93,14 +93,14 @@ public final class RDBJobEventStorage {
             createJobStatusTraceTableAndIndexIfNeeded(connection);
         }
     }
-    
+    // 创建 JOB_EXECUTION_LOG 表和索引
     private void createJobExecutionTableAndIndexIfNeeded(final Connection connection) throws SQLException {
         if (existsTable(connection, TABLE_JOB_EXECUTION_LOG) || existsTable(connection, TABLE_JOB_EXECUTION_LOG.toLowerCase())) {
             return;
         }
         createJobExecutionTable(connection);
     }
-    
+    // 创建 JOB_STATUS_TRACE_LOG 表和索引
     private void createJobStatusTraceTableAndIndexIfNeeded(final Connection connection) throws SQLException {
         if (existsTable(connection, TABLE_JOB_STATUS_TRACE_LOG) || existsTable(connection, TABLE_JOB_STATUS_TRACE_LOG.toLowerCase())) {
             return;
@@ -154,18 +154,18 @@ public final class RDBJobEventStorage {
     }
     
     /**
-     * Add job execution event.
+     * Add job execution event. 存储 JobExecutionEvent。作业分片项执行完成进行的是更新操作
      * 
      * @param jobExecutionEvent job execution event
      * @return add success or not
      */
     public boolean addJobExecutionEvent(final JobExecutionEvent jobExecutionEvent) {
-        if (null == jobExecutionEvent.getCompleteTime()) {
+        if (null == jobExecutionEvent.getCompleteTime()) {  // 作业分片项执行开始
             return insertJobExecutionEvent(jobExecutionEvent);
         } else {
-            if (jobExecutionEvent.isSuccess()) {
+            if (jobExecutionEvent.isSuccess()) {  // 作业分片项执行完成（正常）
                 return updateJobExecutionEventWhenSuccess(jobExecutionEvent);
-            } else {
+            } else {  // 作业分片项执行完成（异常）
                 return updateJobExecutionEventFailure(jobExecutionEvent);
             }
         }

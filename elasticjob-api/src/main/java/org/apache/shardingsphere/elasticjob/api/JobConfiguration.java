@@ -31,34 +31,34 @@ import java.util.LinkedList;
 import java.util.Properties;
 
 /**
- * ElasticJob configuration.
+ * ElasticJob configuration. 配置类
  */
 @Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public final class JobConfiguration {
-    
+    // 作业名称。必填
     private final String jobName;
-    
+    // cron表达式，用于控制作业触发时间。选填
     private final String cron;
     
     private final String timeZone;
-    
+    // 作业分片总数。如果一个作业启动超过作业分片总数的节点，只有 shardingTotalCount 会执行作业。必填
     private final int shardingTotalCount;
-    
+    // 分片序列号和参数。选填。分片序列号和参数用等号分隔，多个键值对用逗号分隔，分片序列号从0开始，不可大于或等于作业分片总数，如：0=a,1=b,2=c
     private final String shardingItemParameters;
-    
+    // 作业自定义参数。选填，可通过传递该参数为作业调度的业务方法传参，用于实现带参数的作业。例：每次获取的数据量、作业实例从数据库读取的主键等
     private final String jobParameter;
-    
+    // 监控作业运行时状态。默认为 false。选填
     private final boolean monitorExecution;
-    
+    // 是否开启作业执行失效转移。开启表示如果作业在一次作业执行中途宕机，允许将该次未完成的作业在另一作业节点上补偿执行。默认为 false。选填
     private final boolean failover;
-    
+    // 是否开启错过作业重新执行。默认为 true。选填
     private final boolean misfire;
-    
+    // 设置最大容忍的本机与注册中心的时间误差秒数。默认为 -1，不检查时间误差。选填
     private final int maxTimeDiffSeconds;
-    
+    // 修复作业服务器不一致状态服务调度间隔时间，配置为小于1的任意值表示不执行修复。默认为 10
     private final int reconcileIntervalMinutes;
-    
+    // 作业分片策略实现类全路径。默认为 AVG_ALLOCATION
     private final String jobShardingStrategyType;
     
     private final String jobExecutorServiceHandlerType;
@@ -68,13 +68,13 @@ public final class JobConfiguration {
     private final Collection<String> jobListenerTypes;
     
     private final Collection<JobExtraConfiguration> extraConfigurations;
-    
+    // 作业描述。选填
     private final String description;
-    
+    // 作业属性配置。选填
     private final Properties props;
-    
+    // 作业是否禁用执行。默认为 false。选填
     private final boolean disabled;
-    
+    // 设置使用本地作业配置覆盖注册中心的作业配置。默认为 false。选填。建议使用运维平台配置作业配置，统一管理。
     private final boolean overwrite;
     
     private final String label;
@@ -91,7 +91,7 @@ public final class JobConfiguration {
     public static Builder newBuilder(final String jobName, final int shardingTotalCount) {
         return new Builder(jobName, shardingTotalCount);
     }
-    
+    // 使用该类配置 LiteJobConfiguration 属性，调用 #build() 方法最终生成作业配置
     @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Builder {
         

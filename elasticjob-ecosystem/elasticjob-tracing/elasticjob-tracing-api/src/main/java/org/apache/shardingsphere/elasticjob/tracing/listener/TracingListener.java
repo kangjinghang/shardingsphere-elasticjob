@@ -28,9 +28,9 @@ import org.apache.shardingsphere.elasticjob.tracing.event.JobStatusTraceEvent;
 public interface TracingListener {
     
     /**
-     * Listen job execution event.
+     * Listen job execution event. 作业执行事件监听执行
      *
-     * @param jobExecutionEvent job execution event
+     * @param jobExecutionEvent job execution event 作业执行事件
      */
     @Subscribe
     @AllowConcurrentEvents

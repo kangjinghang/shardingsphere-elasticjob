@@ -23,7 +23,7 @@ import org.apache.shardingsphere.elasticjob.infra.spi.TypedSPI;
 import java.io.Closeable;
 
 /**
- * Job error handler.
+ * Job error handler. 错误处理策略
  */
 public interface JobErrorHandler extends TypedSPI, SPIPostProcessor, Closeable {
     

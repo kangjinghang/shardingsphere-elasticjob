@@ -18,14 +18,14 @@
 package org.apache.shardingsphere.elasticjob.infra.env;
 
 /**
- * Time service.
+ * Time service. 时间服务
  */
 public final class TimeService {
     
     /**
-     * Get current millis.
+     * Get current millis. 获取当前时间的毫秒数
      * 
-     * @return current millis
+     * @return current millis 当前时间的毫秒数
      */
     public long getCurrentMillis() {
         return System.currentTimeMillis();

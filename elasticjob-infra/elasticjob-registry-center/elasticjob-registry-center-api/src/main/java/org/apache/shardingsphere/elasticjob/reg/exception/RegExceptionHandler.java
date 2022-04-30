@@ -26,7 +26,7 @@ import java.util.LinkedList;
 import java.util.ServiceLoader;
 
 /**
- * Registry center exception handler.
+ * Registry center exception handler. 注册中心异常处理器。在操作 Zookeeper 发生异常时，都会调用 RegExceptionHandler.handleException(...) 处理异常
  */
 @Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -55,7 +55,7 @@ public final class RegExceptionHandler {
             throw new RegException(cause);
         }
     }
-    
+    // 部分异常会被无视，仅打印异常。例如调用 #getDirectly(...) 获得注册数据时，可能节点不存在，抛出 NodeExistsException，这种异常可以无视。
     private static boolean isIgnoredException(final Throwable cause) {
         return IGNORED_EXCEPTIONS.stream().anyMatch(each -> each.isInstance(cause));
     }

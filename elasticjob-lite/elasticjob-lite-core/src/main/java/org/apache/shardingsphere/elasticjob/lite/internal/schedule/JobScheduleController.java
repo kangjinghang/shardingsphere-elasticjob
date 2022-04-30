@@ -35,19 +35,19 @@ import org.quartz.TriggerKey;
 import java.util.TimeZone;
 
 /**
- * Job schedule controller.
+ * Job schedule controller. 作业调度控制器，quartz 调度器的封装
  */
 @RequiredArgsConstructor
 public final class JobScheduleController {
-    
+    // quartz scheduler
     private final Scheduler scheduler;
-    
+    // quartz jobDetail
     private final JobDetail jobDetail;
-    
+    // 触发器编号，目前使用工作名字( jobName )
     private final String triggerIdentity;
     
     /**
-     * Schedule job.
+     * Schedule job.  调度作业
      * 
      * @param cron CRON expression
      * @param timeZone the time zone
@@ -64,7 +64,7 @@ public final class JobScheduleController {
     }
     
     /**
-     * Reschedule job.
+     * Reschedule job.  重新调度作业
      * 
      * @param cron CRON expression
      * @param timeZone the time zone
@@ -93,7 +93,7 @@ public final class JobScheduleController {
             throw new JobSystemException(ex);
         }
     }
-    
+    // 创建触发器，#withMisfireHandlingInstructionDoNothing() 设置 Quartz 系统不会立刻再执行任务，而是等到距离目前时间最近的预计时间执行。重新执行被错过执行的作业交给 Elastic-Job-Lite 处理
     private Trigger createCronTrigger(final String cron, final String timeZoneString) {
         return TriggerBuilder.newTrigger().withIdentity(triggerIdentity).withSchedule(
                 CronScheduleBuilder.cronSchedule(cron).inTimeZone(parseTimeZoneString(timeZoneString)).withMisfireHandlingInstructionDoNothing()
@@ -115,7 +115,7 @@ public final class JobScheduleController {
     }
     
     /**
-     * Judge job is pause or not.
+     * Judge job is pause or not. 判断作业是否暂停
      * 
      * @return job is pause or not
      */
@@ -128,7 +128,7 @@ public final class JobScheduleController {
     }
     
     /**
-     * Pause job.
+     * Pause job. 暂停本地作业调度
      */
     public synchronized void pauseJob() {
         try {
@@ -141,7 +141,7 @@ public final class JobScheduleController {
     }
     
     /**
-     * Resume job.
+     * Resume job. 恢复本地作业调度
      */
     public synchronized void resumeJob() {
         try {
@@ -154,7 +154,7 @@ public final class JobScheduleController {
     }
     
     /**
-     * Trigger job.
+     * Trigger job. 立刻启动作业
      */
     public synchronized void triggerJob() {
         try {
@@ -179,7 +179,7 @@ public final class JobScheduleController {
     }
     
     /**
-     * Shutdown scheduler.
+     * Shutdown scheduler. 关闭调度器
      */
     public synchronized void shutdown() {
         shutdown(false);

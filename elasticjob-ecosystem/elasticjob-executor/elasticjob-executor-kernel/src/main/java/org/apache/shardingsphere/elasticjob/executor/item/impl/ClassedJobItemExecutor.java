@@ -21,8 +21,8 @@ import org.apache.shardingsphere.elasticjob.api.ElasticJob;
 import org.apache.shardingsphere.elasticjob.executor.item.JobItemExecutor;
 
 /**
- * Classed job item executor.
- * 
+ * Classed job item executor.  实现执行器/作业
+ * Class 类型的作业由开发者直接使用，需要由开发者实现该作业接口实现业务逻辑。典型代表：Simple 类型、Dataflow 类型。
  * @param <T> type of ElasticJob
  */
 public interface ClassedJobItemExecutor<T extends ElasticJob> extends JobItemExecutor<T> {

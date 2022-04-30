@@ -32,7 +32,7 @@ import org.apache.shardingsphere.elasticjob.reg.listener.DataChangedEvent.Type;
 import org.apache.shardingsphere.elasticjob.reg.listener.DataChangedEventListener;
 
 /**
- * Sharding listener manager.
+ * Sharding listener manager. 继承作业注册中心的监听器管理者的抽象类，内部管理了 ShardingTotalCountChangedJobListener / ListenServersChangedJobListener 两个作业注册中心监听器
  */
 public final class ShardingListenerManager extends AbstractListenerManager {
     
@@ -66,7 +66,7 @@ public final class ShardingListenerManager extends AbstractListenerManager {
         addDataListener(new ShardingTotalCountChangedJobListener());
         addDataListener(new ListenServersChangedJobListener());
     }
-    
+    // 监听作业配置分片数变更
     class ShardingTotalCountChangedJobListener implements DataChangedEventListener {
         
         @Override
@@ -74,17 +74,17 @@ public final class ShardingListenerManager extends AbstractListenerManager {
             if (configNode.isConfigPath(event.getKey()) && 0 != JobRegistry.getInstance().getCurrentShardingTotalCount(jobName)) {
                 int newShardingTotalCount = YamlEngine.unmarshal(event.getValue(), JobConfigurationPOJO.class).toJobConfiguration().getShardingTotalCount();
                 if (newShardingTotalCount != JobRegistry.getInstance().getCurrentShardingTotalCount(jobName)) {
-                    shardingService.setReshardingFlag();
-                    JobRegistry.getInstance().setCurrentShardingTotalCount(jobName, newShardingTotalCount);
+                    shardingService.setReshardingFlag(); // 设置需要重新分片的标记
+                    JobRegistry.getInstance().setCurrentShardingTotalCount(jobName, newShardingTotalCount); // 设置当前分片总数
                 }
             }
         }
     }
-    
+    // 监听 server znode 和 instance znode，对于一个作业，server 可有对应多个 instance，因此 server 的上下线，同时接收到 server 和 instance 事件
     class ListenServersChangedJobListener implements DataChangedEventListener {
         
         @Override
-        public void onChange(final DataChangedEvent event) {
+        public void onChange(final DataChangedEvent event) { // #isServerChange(...) 服务器被开启或禁用，#isInstanceChange(...) 作业节点新增或者移除
             if (!JobRegistry.getInstance().isShutdown(jobName) && (isInstanceChange(event.getType(), event.getKey()) || isServerChange(event.getKey())) && !(isStaticSharding() && hasShardingInfo())) {
                 shardingService.setReshardingFlag();
             }
@@ -97,11 +97,11 @@ public final class ShardingListenerManager extends AbstractListenerManager {
         private boolean hasShardingInfo() {
             return !JobRegistry.getInstance().getRegCenter(jobName).getChildrenKeys(jobNodePath.getShardingNodePath()).isEmpty();
         }
-        
+        // 作业节点新增或者移除
         private boolean isInstanceChange(final Type eventType, final String path) {
             return instanceNode.isInstancePath(path) && Type.UPDATED != eventType;
         }
-        
+        // 服务器被开启或禁用
         private boolean isServerChange(final String path) {
             return serverNode.isServerPath(path);
         }

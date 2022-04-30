@@ -18,7 +18,7 @@
 package org.apache.shardingsphere.elasticjob.api;
 
 /**
- * ElasticJob interface.
+ * ElasticJob interface. 标记类
  */
 public interface ElasticJob {
 }

@@ -27,7 +27,7 @@ import org.apache.shardingsphere.elasticjob.reg.base.CoordinatorRegistryCenter;
 import org.apache.shardingsphere.elasticjob.reg.listener.ConnectionStateChangedEventListener;
 
 /**
- * Registry center connection state listener.
+ * Registry center connection state listener.  连接状态的监听器，连接断开暂停作业。重连后，重新初始化作业，清除分片，重启作业
  */
 public final class RegistryCenterConnectionStateListener implements ConnectionStateChangedEventListener {
     
@@ -55,13 +55,13 @@ public final class RegistryCenterConnectionStateListener implements ConnectionSt
             return;
         }
         JobScheduleController jobScheduleController = JobRegistry.getInstance().getJobScheduleController(jobName);
-        if (State.UNAVAILABLE == newState) {
+        if (State.UNAVAILABLE == newState) { // 暂停作业调度
             jobScheduleController.pauseJob();
-        } else if (State.RECONNECTED == newState) {
-            serverService.persistOnline(serverService.isEnableServer(JobRegistry.getInstance().getJobInstance(jobName).getServerIp()));
-            instanceService.persistOnline();
-            executionService.clearRunningInfo(shardingService.getLocalShardingItems());
-            jobScheduleController.resumeJob();
+        } else if (State.RECONNECTED == newState) {  // Zookeeper 重新连上
+            serverService.persistOnline(serverService.isEnableServer(JobRegistry.getInstance().getJobInstance(jobName).getServerIp())); // 持久化作业服务器上线信息
+            instanceService.persistOnline(); // 持久化作业运行实例上线相关信息
+            executionService.clearRunningInfo(shardingService.getLocalShardingItems()); // 清除本地分配的作业分片项运行中的标记
+            jobScheduleController.resumeJob(); // 恢复作业调度
         }
     }
 }

@@ -44,9 +44,9 @@ public final class ServerService {
     }
     
     /**
-     * Persist online status of job server.
+     * Persist online status of job server. 持久化作业服务器上线信息
      * 
-     * @param enabled enable server or not
+     * @param enabled enable server or not 作业服务器是否启用
      */
     public void persistOnline(final boolean enabled) {
         if (!JobRegistry.getInstance().isShutdown(jobName)) {

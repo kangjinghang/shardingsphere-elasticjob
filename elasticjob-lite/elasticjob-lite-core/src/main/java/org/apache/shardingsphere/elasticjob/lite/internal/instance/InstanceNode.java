@@ -22,12 +22,12 @@ import org.apache.shardingsphere.elasticjob.lite.internal.schedule.JobRegistry;
 import org.apache.shardingsphere.elasticjob.lite.internal.storage.JobNodePath;
 
 /**
- * Instance node.
+ * Instance node. 运行实例节点路径
  */
 public final class InstanceNode {
-    
+    // 运行实例信息根节点
     public static final String ROOT = "instances";
-    
+    // instances 目录下以作业实例主键( JOB_INSTANCE_ID ) 为数据节点路径存储每个运行实例节点。/instances/${JOB_INSTANCE_ID} 是临时节点，不存储任何信息，只是空串( "")
     private static final String INSTANCES = ROOT + "/%s";
     
     private final String jobName;
@@ -40,7 +40,7 @@ public final class InstanceNode {
     }
     
     /**
-     * Get job instance full path.
+     * Get job instance full path. 获取当前运行实例节点路径
      *
      * @return job instance full path
      */

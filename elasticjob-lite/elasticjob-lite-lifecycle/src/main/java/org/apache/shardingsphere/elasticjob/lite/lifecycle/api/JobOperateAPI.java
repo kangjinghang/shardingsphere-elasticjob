@@ -23,45 +23,45 @@ package org.apache.shardingsphere.elasticjob.lite.lifecycle.api;
 public interface JobOperateAPI {
     
     /**
-     * Trigger job to run at once.
+     * Trigger job to run at once. 触发作业执行，作业在不与当前运行中作业冲突的情况下才会触发执行，并在启动后自动清理此标记。
      *
      * <p>Job will not start until it does not conflict with the last running job, and this tag will be automatically cleaned up after it starts.</p>
      *
-     * @param jobName job name
+     * @param jobName job name 作业名称
      */
     void trigger(String jobName);
     
     /**
-     * Disable job.
-     * 
+     * Disable job. 禁用作业，禁用作业将会导致分布式的其他作业触发重新分片。
+     *
      * <p>Will cause resharding.</p>
      *
-     * @param jobName job name
-     * @param serverIp server IP address
+     * @param jobName job name 作业名称
+     * @param serverIp server IP address 作业服务器 IP 地址
      */
     void disable(String jobName, String serverIp);
     
     /**
-     * Enable job.
+     * Enable job. 启用作业
      * 
-     * @param jobName job name
-     * @param serverIp server IP address
+     * @param jobName job name 作业名称
+     * @param serverIp server IP address 作业服务器 IP 地址
      */
     void enable(String jobName, String serverIp);
     
     /**
-     * Shutdown Job.
+     * Shutdown Job. 停止调度作业
      *
-     * @param jobName job name
-     * @param serverIp server IP address
+     * @param jobName job name 作业名称
+     * @param serverIp server IP address 作业服务器 IP 地址
      */
     void shutdown(String jobName, String serverIp);
     
     /**
-     * Remove job.
+     * Remove job. 删除作业
      * 
-     * @param jobName job name
-     * @param serverIp server IP address
+     * @param jobName job name 作业名称
+     * @param serverIp server IP address 作业服务器 IP 地址
      */
     void remove(String jobName, String serverIp);
 }

@@ -39,9 +39,9 @@ public final class JobTriggerListener extends TriggerListenerSupport {
     }
     
     @Override
-    public void triggerMisfired(final Trigger trigger) {
+    public void triggerMisfired(final Trigger trigger) { // 处理触发错失，设置 znode /misfired 节点，使用 elastic-job 的错过重调度机制补偿执行
         if (null != trigger.getPreviousFireTime()) {
-            executionService.setMisfire(shardingService.getLocalShardingItems());
+            executionService.setMisfire(shardingService.getLocalShardingItems()); // 设置作业分片项为被错过执行的状态
         }
     }
 }

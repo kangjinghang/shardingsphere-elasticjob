@@ -27,12 +27,12 @@ import org.apache.shardingsphere.elasticjob.infra.env.TimeService;
 import org.apache.shardingsphere.elasticjob.infra.yaml.YamlEngine;
 
 /**
- * Configuration service.
+ * Configuration service. 作业配置服务。多个 Elastic-Job-Lite 使用相同注册中心和相同 namespace 组成集群，实现高可用。集群中，使用作业配置服务( ConfigurationService ) 共享作业配置。
  */
 public final class ConfigurationService {
-    
+    // 时间服务
     private final TimeService timeService;
-    
+    // 作业节点数据访问类
     private final JobNodeStorage jobNodeStorage;
     
     public ConfigurationService(final CoordinatorRegistryCenter regCenter, final String jobName) {
@@ -41,14 +41,14 @@ public final class ConfigurationService {
     }
     
     /**
-     * Load job configuration.
+     * Load job configuration. 读取作业配置
      * 
-     * @param fromCache load from cache or not
-     * @return job configuration
+     * @param fromCache load from cache or not 是否从缓存中读取
+     * @return job configuration 作业配置
      */
     public JobConfiguration load(final boolean fromCache) {
         String result;
-        if (fromCache) {
+        if (fromCache) {  // 缓存
             result = jobNodeStorage.getJobNodeData(ConfigurationNode.ROOT);
             if (null == result) {
                 result = jobNodeStorage.getJobNodeDataDirectly(ConfigurationNode.ROOT);
@@ -60,7 +60,7 @@ public final class ConfigurationService {
     }
     
     /**
-     * Set up job configuration.
+     * Set up job configuration. 设置分布式作业配置信息
      * 
      * @param jobClassName job class name
      * @param jobConfig job configuration to be updated
@@ -68,20 +68,20 @@ public final class ConfigurationService {
      */
     public JobConfiguration setUpJobConfiguration(final String jobClassName, final JobConfiguration jobConfig) {
         checkConflictJob(jobClassName, jobConfig);
-        if (!jobNodeStorage.isJobNodeExisted(ConfigurationNode.ROOT) || jobConfig.isOverwrite()) {
+        if (!jobNodeStorage.isJobNodeExisted(ConfigurationNode.ROOT) || jobConfig.isOverwrite()) { //当前作业配置允许替换注册中心作业配置( overwrite = true )时，可以设置作业配置。
             jobNodeStorage.replaceJobNode(ConfigurationNode.ROOT, YamlEngine.marshal(JobConfigurationPOJO.fromJobConfiguration(jobConfig)));
             jobNodeStorage.replaceJobRootNode(jobClassName);
             return jobConfig;
         }
         return load(false);
     }
-    
+    // 校验注册中心存储的作业配置的作业实现类全路径( jobClass )和当前的是否相同，如果不同，则认为是冲突，不允许存储
     private void checkConflictJob(final String newJobClassName, final JobConfiguration jobConfig) {
         if (!jobNodeStorage.isJobRootNodeExisted()) {
             return;
         }
         String originalJobClassName = jobNodeStorage.getJobRootNodeData();
-        if (null != originalJobClassName && !originalJobClassName.equals(newJobClassName)) {
+        if (null != originalJobClassName && !originalJobClassName.equals(newJobClassName)) { //  jobClass 是否相同
             throw new JobConfigurationException(
                     "Job conflict with register center. The job '%s' in register center's class is '%s', your job class is '%s'", jobConfig.getJobName(), originalJobClassName, newJobClassName);
         }
@@ -89,8 +89,8 @@ public final class ConfigurationService {
     
     /**
      * Check max time different seconds tolerable between job server and registry center.
-     * 
-     * @throws JobExecutionEnvironmentException throe JobExecutionEnvironmentException if exceed max time different seconds
+     * 检查本机与注册中心的时间误差秒数是否在允许范围( maxTimeDiffSeconds )，Elastic-Job-Lite 作业触发是依赖本机时间，相同集群使用注册中心时间为基准
+     * @throws JobExecutionEnvironmentException throe JobExecutionEnvironmentException if exceed max time different seconds 本机与注册中心的时间误差秒数不在允许范围所抛出的异常
      */
     public void checkMaxTimeDiffSecondsTolerable() throws JobExecutionEnvironmentException {
         int maxTimeDiffSeconds = load(true).getMaxTimeDiffSeconds();

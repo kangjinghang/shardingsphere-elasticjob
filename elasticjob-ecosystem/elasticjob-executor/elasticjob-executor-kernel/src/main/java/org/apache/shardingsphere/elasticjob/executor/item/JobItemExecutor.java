@@ -23,7 +23,7 @@ import org.apache.shardingsphere.elasticjob.api.JobConfiguration;
 import org.apache.shardingsphere.elasticjob.executor.JobFacade;
 
 /**
- * Job item executor.
+ * Job item executor. 真正的作业执行器，两类作业，Typed/Classed，Typed 类型作业实现远程调用执行器，如 http，feign，不用实现作业类，作业进程是通用的执行节点，不会依赖作业业务；Classed 实现执行器/作业
  * 
  * @param <T> type of ElasticJob
  */

@@ -22,7 +22,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 /**
- * Zookeeper configuration.
+ * Zookeeper configuration. 基于 Zookeeper 的注册中心配置
  */
 @Getter
 @Setter

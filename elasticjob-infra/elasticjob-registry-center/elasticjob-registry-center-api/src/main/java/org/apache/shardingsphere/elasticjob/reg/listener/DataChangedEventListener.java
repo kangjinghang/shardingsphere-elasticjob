@@ -23,7 +23,7 @@ package org.apache.shardingsphere.elasticjob.reg.listener;
 public interface DataChangedEventListener {
 
     /**
-     * Fire when data changed.
+     * Fire when data changed.  节点数据变化
      *
      * @param event data changed event
      */

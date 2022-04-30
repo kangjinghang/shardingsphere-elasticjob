@@ -18,7 +18,7 @@
 package org.apache.shardingsphere.elasticjob.reg.base;
 
 /**
- * Leader server execution callback.
+ * Leader server execution callback.  主节点选举后回调
  */
 public interface LeaderExecutionCallback {
     

@@ -20,10 +20,10 @@ package org.apache.shardingsphere.elasticjob.lite.internal.config;
 import org.apache.shardingsphere.elasticjob.lite.internal.storage.JobNodePath;
 
 /**
- * Configuration node.
+ * Configuration node. 配置节点路径
  */
 public final class ConfigurationNode {
-    
+    // config 是持久节点，存储 作业配置( JobConfiguration ) JSON化字符串。
     static final String ROOT = "config";
     
     private final JobNodePath jobNodePath;

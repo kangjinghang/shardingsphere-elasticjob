@@ -47,7 +47,7 @@ public final class GuaranteeListenerManager extends AbstractListenerManager {
         addDataListener(new StartedNodeRemovedJobListener());
         addDataListener(new CompletedNodeRemovedJobListener());
     }
-    
+    // 监听到 /${JOB_NAME}/guarantee/started/ 被删除，调用 Object#notifyAll(...) 方法进行唤醒全部
     class StartedNodeRemovedJobListener implements DataChangedEventListener {
         
         @Override

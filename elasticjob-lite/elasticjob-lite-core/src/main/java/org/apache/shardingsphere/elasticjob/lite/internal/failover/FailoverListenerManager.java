@@ -68,24 +68,24 @@ public final class FailoverListenerManager extends AbstractListenerManager {
     private boolean isFailoverEnabled() {
         return configService.load(true).isFailover();
     }
-    
+    // 监听运行实例znode /instances/{instanceId} 删除事件，即运行实例【下线】（虽然名为【崩溃】）事件，本节点下线不处理
     class JobCrashedJobListener implements DataChangedEventListener {
-        
+
         @Override
-        public void onChange(final DataChangedEvent event) {
+        public void onChange(final DataChangedEvent event) { // 通过判断 /${JOB_NAME}/instances/${INSTANCE_ID} 被移除，执行作业失效转移逻辑。
             if (!JobRegistry.getInstance().isShutdown(jobName) && isFailoverEnabled() && Type.DELETED == event.getType() && instanceNode.isInstancePath(event.getKey())) {
-                String jobInstanceId = event.getKey().substring(instanceNode.getInstanceFullPath().length() + 1);
-                if (jobInstanceId.equals(JobRegistry.getInstance().getJobInstance(jobName).getJobInstanceId())) {
+                String jobInstanceId = event.getKey().substring(instanceNode.getInstanceFullPath().length() + 1); // 下线实例 instanceId
+                if (jobInstanceId.equals(JobRegistry.getInstance().getJobInstance(jobName).getJobInstanceId())) { // 本节点不处理
                     return;
                 }
-                List<Integer> failoverItems = failoverService.getFailoveringItems(jobInstanceId);
-                if (!failoverItems.isEmpty()) {
+                List<Integer> failoverItems = failoverService.getFailoveringItems(jobInstanceId); // 优先调用，获取【下线实例抢到】的失效转移分片（分配给它的作业分片项已经执行完成，抢的别人的？）， /${JOB_NAME}/sharding/${ITEM_ID}/failover 下的作业分片项
+                if (!failoverItems.isEmpty()) { // 获取下线实例的失效转移中的分片
                     for (int each : failoverItems) {
                         failoverService.setCrashedFailoverFlagDirectly(each);
-                        failoverService.failoverIfNecessary();
+                        failoverService.failoverIfNecessary(); // 主节点回调处理
                     }
-                } else {
-                    for (int each : shardingService.getCrashedShardingItems(jobInstanceId)) {
+                } else { // 若 failoverItems 为空，获得关闭作业节点( ${JOB_INSTANCE_ID} )对应的 /${JOB_NAME}/sharding/${ITEM_ID}/instance 作业分片项
+                    for (int each : shardingService.getCrashedShardingItems(jobInstanceId)) { // /${JOB_NAME}/sharding/${ITEM_ID}/instance
                         failoverService.setCrashedFailoverFlag(each);
                         failoverService.failoverIfNecessary();
                     }
@@ -93,13 +93,13 @@ public final class FailoverListenerManager extends AbstractListenerManager {
             }
         }
     }
-    
+    //  监听作业失效转移功能关闭
     class FailoverSettingsChangedJobListener implements DataChangedEventListener {
         
         @Override
         public void onChange(final DataChangedEvent event) {
             if (configNode.isConfigPath(event.getKey()) && Type.UPDATED == event.getType() && !YamlEngine.unmarshal(event.getValue(), JobConfigurationPOJO.class).toJobConfiguration().isFailover()) {
-                failoverService.removeFailoverInfo();
+                failoverService.removeFailoverInfo(); // 关闭失效转移功能
             }
         }
     }
